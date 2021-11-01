@@ -1,28 +1,22 @@
-import pygame
+import pygame, sys
+from config import *
 
-pygame.init()
-display_width = 480
-display_height = 270
 
-screen = pygame.display.set_mode((display_width, display_height))
-animated_text = pygame.image.load('images/Animation/animation.png')
-fpsClock = pygame.time.Clock()
-imageX = 100
-imageY = 20
-running = True
-Black = (0, 0, 0)
+class Animation:
+    def __init__(self, window):
+        self.window = window
+        self.clock = pygame.time.Clock()
 
-while (running):
-    imageY += 10
-    screen.fill(Black)
-    screen.blit(animated_text, (imageX, imageY))
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            running = False
-        if event.type == pygame.MOUSEBUTTONDOWN:
-            x, y = event.pos
-
-    pygame.display.update()
-    fpsClock.tick(2)
-
-pygame.quit()
+    def animate_image(self, background, image, x, y):
+        image = pygame.image.load(image)
+        rect = image.get_rect(topleft=(x, y))
+        while rect.y < GAME_HEIGHT:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    sys.exit()
+            self.window.fill(background)
+            self.window.blit(image, rect)
+            rect.y += 2
+            pygame.display.update()
+            self.clock.tick(FPS)
