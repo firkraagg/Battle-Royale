@@ -17,6 +17,7 @@ class Animation:
                     sys.exit()
             self.window.fill(background)
             self.window.blit(image, rect)
-            rect.y += 2
+            pygame.time.wait(25)
+            rect.y -= 1
             pygame.display.update()
             self.clock.tick(FPS)
