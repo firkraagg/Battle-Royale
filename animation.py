@@ -10,7 +10,7 @@ class Animation:
     def animate_image(self, background, image, x, y):
         image = pygame.image.load(image)
         rect = image.get_rect(topleft=(x, y))
-        while rect.y > -GAME_HEIGHT:
+        while rect.y < GAME_HEIGHT:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.quit()
