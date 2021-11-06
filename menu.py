@@ -43,4 +43,5 @@ class MainMenu(Menu):
             if self.state == 'Start':
                 self.game.playing = True
             self.run_display = False
+            self.game.playing = True
 

@@ -53,5 +53,6 @@ game = Game()
 
 while game.running:
     game.current_menu.display_menu()
-    game.animation.animate_image(BLACK, 'images/Animation/animation.png', 5, 250)
-    game.game_loop()
+    while game.playing:
+        game.animation.animate_image(BLACK, 'images/Animation/animation.png', 5, 250)
+        game.game_loop()
