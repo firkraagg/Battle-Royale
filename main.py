@@ -20,21 +20,23 @@ class Game:
         self.font_name = pygame.font.get_default_font()
         self.current_menu = MainMenu(self)
         self.animation = Story(self.window)
-        self.prison = Prison(self.window)
-        self.player = Player(350, 172)
+        self.prison = Prison(self, self.window)
 
+    def new(self):
+        self.player_group = pygame.sprite.LayeredUpdates()
 
-
+        self.player = Player(self, 350, 172)
 
     def game_loop(self):
-        while self.playing:
-            self.check_events()
-            if self.start_key:
-                self.playing = True
-            pygame.display.update()
-            self.clock.tick(FPS)
-            self.reset_keys()
-
+        self.check_events()
+        if self.start_key:
+            self.playing = True
+        self.prison.prison_background(BLACK, 'images/Prison/prison.png', 0, 0)
+        self.player_group.update()
+        self.player_group.draw(self.window)
+        pygame.display.update()
+        self.clock.tick(FPS)
+        self.reset_keys()
 
     def check_events(self):
         for event in pygame.event.get():
@@ -63,8 +65,5 @@ while game.running:
     game.current_menu.display_menu()
     while game.playing:
         # game.animation.animate_image(BLACK, 'images/Animation/animation.png', 5, 250)
-        game.prison.prison_background(BLACK, 'images/Prison/prison.png', 0, 0)
-        game.player.update()
-        game.player.draw()
         game.game_loop()
 
