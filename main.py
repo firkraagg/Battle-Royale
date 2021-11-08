@@ -1,7 +1,11 @@
 import pygame
+from pygame import image
+
 from config import *
 from menu import MainMenu
-from animation import Animation
+from animation import Story
+from prison import Prison
+from prison import Player
 
 
 class Game:
@@ -15,19 +19,22 @@ class Game:
         self.display = pygame.Surface((GAME_WIDTH, GAME_HEIGHT))
         self.font_name = pygame.font.get_default_font()
         self.current_menu = MainMenu(self)
+        self.animation = Story(self.window)
+        self.prison = Prison(self.window)
+        self.player = Player(350, 172)
 
-        self.animation = Animation(self.window)
+
+
 
     def game_loop(self):
         while self.playing:
             self.check_events()
             if self.start_key:
-                self.playing = False
-            self.display.fill(BLACK)
-            self.window.blit(self.display, (0, 0))
+                self.playing = True
             pygame.display.update()
             self.clock.tick(FPS)
             self.reset_keys()
+
 
     def check_events(self):
         for event in pygame.event.get():
@@ -51,8 +58,13 @@ class Game:
 
 game = Game()
 
+
 while game.running:
     game.current_menu.display_menu()
     while game.playing:
-        game.animation.animate_image(BLACK, 'images/Animation/animation.png', 5, 250)
+        # game.animation.animate_image(BLACK, 'images/Animation/animation.png', 5, 250)
+        game.prison.prison_background(BLACK, 'images/Prison/prison.png', 0, 0)
+        game.player.update()
+        game.player.draw()
         game.game_loop()
+

@@ -2,7 +2,7 @@ import pygame, sys
 from config import *
 
 
-class Animation:
+class Story:
     def __init__(self, window):
         self.window = window
         self.clock = pygame.time.Clock()
@@ -20,4 +20,4 @@ class Animation:
             pygame.time.wait(25)
             rect.y -= 1
             pygame.display.update()
-            self.clock.tick(FPS)
+            self.clock.tick(200)
