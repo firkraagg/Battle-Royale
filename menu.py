@@ -34,7 +34,7 @@ class MainMenu(Menu):
             self.game.display.fill(BLACK)
             self.game.draw_text('Main Menu', 20, self.mid_w, self.mid_h - 20)
             self.game.draw_text("Start Game", 20, self.startx, self.starty)
-            self.game.draw_text('Press ENTER', 10, self.mid_w, self.mid_h + 80)
+            self.game.draw_text('Press Enter', 10, self.mid_w, self.mid_h + 80)
             self.draw_cursor()
             self.blit_screen()
 
@@ -43,5 +43,4 @@ class MainMenu(Menu):
             if self.state == 'Start':
                 self.game.playing = True
             self.run_display = False
-            self.game.playing = True
 
