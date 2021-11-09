@@ -4,50 +4,6 @@ from config import *
 class Button1:
     def __init__(self, game, text, width, height, pos, elevation):
         self.game = game
-<<<<<<< Updated upstream
-=======
-<<<<<<< HEAD
-        self.mid_w, self.mid_h = GAME_WIDTH / 2, GAME_HEIGHT / 2
-        self.run_display = True
-        self.cursor_rectangle = pygame.Rect(0, 0, 20, 20)
-        self.offset = - 100
-
-    def draw_cursor(self):
-        self.game.draw_text('*', 15, self.cursor_rectangle.x, self.cursor_rectangle.y)
-
-    def blit_screen(self):
-        self.game.window.blit(self.game.display, (0, 0))
-        pygame.display.update()
-        self.game.reset_keys()
-
-
-class MainMenu(Menu):
-    def __init__(self, game):
-        Menu.__init__(self, game)
-        self.state = "Start"
-        self.startx, self.starty = self.mid_w, self.mid_h + 30
-        self.cursor_rectangle.midtop = (self.startx + self.offset, self.starty)
-
-    def display_menu(self):
-        self.run_display = True
-        while self.run_display:
-            self.game.check_events()
-            self.check_input()
-            self.game.display.fill(BLACK)
-            self.game.draw_text('Main Menu', 20, self.mid_w, self.mid_h - 20)
-            self.game.draw_text("Start Game", 20, self.startx, self.starty)
-            self.game.draw_text('Press Enter', 10, self.mid_w, self.mid_h + 80)
-            self.draw_cursor()
-            self.blit_screen()
-
-    def check_input(self):
-        if self.game.start_key:
-            if self.state == 'Start':
-                self.game.playing = True
-            self.run_display = False
-
-=======
->>>>>>> Stashed changes
         self.pressed = False
         self.elevation = elevation
         self.dynamic_elevation = elevation
@@ -140,6 +96,7 @@ class Button2:
         else:
             self.dynamic_elevation = self.elevation
 <<<<<<< HEAD
+<<<<<<< HEAD
 <<<<<<< Updated upstream
             self.top_color = '#475F90'
 =======
@@ -149,3 +106,6 @@ class Button2:
 =======
             self.top_color = '#475F90'
 >>>>>>> parent of b5c6820 (Fixed buttons)
+=======
+            self.top_color = '#475F90'
+>>>>>>> parent of b770e45 (Fixed buttons)
