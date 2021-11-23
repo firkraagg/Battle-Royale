@@ -25,40 +25,37 @@ class Prison:
 
 
 
-class Player:
-    def __init__(self, game, x, y):
-        self.game = game
-        self.alive = True
+class Player(pygame.sprite.Sprite):
+    def __init__(self, x, y):
+        super().__init__()
         self.window = pygame.display.set_mode((GAME_WIDTH, GAME_HEIGHT))
-        self.animation_list = []
-        self.frame_index = 0
-        self.update_time = pygame.time.get_ticks()
-        for i in range(6):
-            img = pygame.image.load(f'images/Player/{i}.png')
-            img = pygame.transform.scale(img, (img.get_width() * 3.5, img.get_height() * 3.5))
-            self.animation_list.append(img)
-        self.image = self.animation_list[self.frame_index]
+        self.sprites = []
+        self.sprites.append(pygame.image.load('images/Player/img0.png'))
+        self.sprites.append(pygame.image.load('images/Player/img1.png'))
+        self.sprites.append(pygame.image.load('images/Player/img2.png'))
+        self.sprites.append(pygame.image.load('images/Player/img3.png'))
+        self.sprites.append(pygame.image.load('images/Player/img4.png'))
+        self.sprites.append(pygame.image.load('images/Player/img5.png'))
+        self.current_sprite = 0
+        self.image = self.sprites[self.current_sprite]
         self.rect = self.image.get_rect()
-        self.rect.center = (x, y)
+        self.rect.topleft = [x, y]
+        # self.animation_list = []
+        # self.frame_index = 0
+        # self.update_time = pygame.time.get_ticks()
+        # for i in range(6):
+        #     img = pygame.image.load(f'images/Player/{i}.png')
+        #     img = pygame.transform.scale(img, (img.get_width() * 3.5, img.get_height() * 3.5))
+        #     self.animation_list.append(img)
+        # self.image = self.animation_list[self.frame_index]
+        # self.rect = self.image.get_rect()
+        # self.rect.center = (x, y)
 
     def update(self):
-        animation_cooldown = 150
-        self.image = self.animation_list[self.frame_index]
-        if pygame.time.get_ticks() - self.update_time > animation_cooldown:
-            self.update_time = pygame.time.get_ticks()
-            self.frame_index += 1
-
-        if self.frame_index >= len(self.animation_list):
-            self.frame_index = 0
-
-
-
-
-
-
-    def draw(self):
-        self.window.blit(self.image, self.rect)
-
+        self.current_sprite += 0.1
+        if self.current_sprite >= len(self.sprites):
+            self.current_sprite = 0
+        self.image = self.sprites[int(self.current_sprite)]
 
 class Npc:
     def __init__(self, game, image, x, y):
@@ -99,3 +96,6 @@ class Npc:
     #     self.frame_index += 0.1
     #     if self.frame_index >= len(self.frames):
     #         self.frame_index = 0
+
+class dialogue:
+    def __init__(self):

@@ -22,7 +22,7 @@ class Game:
         self.current_menu = MainMenu(self)
         self.animation = Story(self.window)
         self.prison = Prison(self, self.window)
-        self.player = Player(self, 550, 298)
+        self.player = Player(550, 298)
         self.npc = Npc(self, 'images/Npc/0.png', 250, 290)
 
 
@@ -66,6 +66,13 @@ class Game:
         self.display.blit(text_surface, text_rectangle)
 
 game = Game()
+moving_sprites = pygame.sprite.Group()
+player = Player(300, 300)
+moving_sprites.add(player)
+window = pygame.display.set_mode((GAME_WIDTH, GAME_HEIGHT))
+prison_background = pygame.image.load('images/Prison/prison.png')
+        # image = pygame.transform.scale(image, (720, 480))
+
 
 
 while game.running:
@@ -73,9 +80,10 @@ while game.running:
     # game.animation.animate_image(BLACK, 'images/Animation/animation.png', 100, 400)
     game.prison.prison_background(BLACK, 'images/Prison/prison.png', 0, 0)
     while game.playing:
-
-        game.player.update()
-        game.player.draw()
+        moving_sprites.draw(window)
+        moving_sprites.update()
+        # game.player.update()
+        # game.player.draw()
         game.npc.draw(image)
         game.game_loop()
 
