@@ -3,40 +3,31 @@
 import pygame, sys
 from config import *
 
-class Prison:
+class Prison(pygame.sprite.Sprite):
     def __init__(self, game, window):
         self.game = game
+        self.groups = self.game.sprites
+        pygame.sprite.Sprite.__init__(self, self.groups)
+
         self.window = window
         self.clock = pygame.time.Clock()
-        # self.game.new()
 
-    def prison_background(self, background, image, x, y):
-        image = pygame.image.load(image)
-        image = pygame.transform.scale(image, (720, 480))
-        rect = image.get_rect(topleft=(x, y))
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                pygame.quit()
-                sys.exit()
-        self.window.fill(background)
-        self.window.blit(image, rect)
-        pygame.display.update()
-        self.clock.tick(FPS)
-
-
+        self.image = pygame.image.load('images/Prison/prison.png')
+        self.image = pygame.transform.scale(self.image, (self.window.get_width(), self.window.get_height()))
+        self.rect = self.image.get_rect()
 
 class Player(pygame.sprite.Sprite):
-    def __init__(self, x, y):
-        super().__init__()
+    def __init__(self, game, x, y):
+        self.game = game
+        self.groups = self.game.sprites
+        pygame.sprite.Sprite.__init__(self, self.groups)
+
         self.window = pygame.display.set_mode((GAME_WIDTH, GAME_HEIGHT))
         self.sprites = []
-        self.sprites.append(pygame.image.load('images/Player/img0.png'))
-        self.sprites.append(pygame.image.load('images/Player/img1.png'))
-        self.sprites.append(pygame.image.load('images/Player/img2.png'))
-        self.sprites.append(pygame.image.load('images/Player/img3.png'))
-        self.sprites.append(pygame.image.load('images/Player/img4.png'))
-        self.sprites.append(pygame.image.load('images/Player/img5.png'))
+        for i in range(5):
+            self.sprites.append(pygame.transform.scale(pygame.image.load(f'images/Player/img{i}.png'), (145, 145)))
         self.current_sprite = 0
+
         self.image = self.sprites[self.current_sprite]
         self.rect = self.image.get_rect()
         self.rect.topleft = [x, y]
@@ -57,9 +48,12 @@ class Player(pygame.sprite.Sprite):
             self.current_sprite = 0
         self.image = self.sprites[int(self.current_sprite)]
 
-class Npc:
+class Npc(pygame.sprite.Sprite):
     def __init__(self, game, image, x, y):
         self.game = game
+        self.groups = self.game.sprites
+        pygame.sprite.Sprite.__init__(self, self.groups)
+
         self.alive = True
         self.window = pygame.display.set_mode((GAME_WIDTH, GAME_HEIGHT))
         img = pygame.image.load(image)
@@ -67,9 +61,8 @@ class Npc:
         self.rect = self.image.get_rect()
         self.rect.center = (x, y)
 
-    def draw(self, game):
-        self.game = game
-        self.window.blit(self.image, self.rect)
+    def update(self):
+        pass
 # class Npc(pygame.sprite.Sprite):
 #     def __init__(self, game, x, y):
 #         self.game = game
@@ -97,5 +90,6 @@ class Npc:
     #     if self.frame_index >= len(self.frames):
     #         self.frame_index = 0
 
-class dialogue:
+class Dialogue:
     def __init__(self):
+        pass
