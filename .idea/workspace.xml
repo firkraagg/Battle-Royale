@@ -2,9 +2,24 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="e054b9e2-b311-4df7-a4e8-c3205e478890" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/images/Npc/0.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/images/Player/0.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/images/Player/1.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/images/Player/2.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/images/Player/3.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/images/Player/4.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/images/Player/5.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/images/Prison/prison.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/prison.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/animation.py" beforeDir="false" afterPath="$PROJECT_DIR$/animation.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/config.py" beforeDir="false" afterPath="$PROJECT_DIR$/config.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/images/Animation/animation.png" beforeDir="false" afterPath="$PROJECT_DIR$/images/Animation/animation.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/images/Background/background.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/images/Background/sandrine-pilloud-160404-i3gamejam-forest.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/images/Bandit/bandit.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/images/Player/player.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/menu.py" beforeDir="false" afterPath="$PROJECT_DIR$/menu.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/scene.py" beforeDir="false" afterPath="$PROJECT_DIR$/scene.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -40,7 +55,7 @@
       <envs>
         <env name="PYTHONUNBUFFERED" value="1" />
       </envs>
-      <option name="SDK_HOME" value="D:\Projects\Python\zelda0.3\venv\Scripts\python.exe" />
+      <option name="SDK_HOME" value="C:\Users\Danko\PycharmProjects\Battle Royale 1\venv\Scripts\python.exe" />
       <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
       <option name="IS_MODULE_SDK" value="false" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
@@ -99,6 +114,7 @@
         </entry>
       </map>
     </option>
+    <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="VcsManagerConfiguration">
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
