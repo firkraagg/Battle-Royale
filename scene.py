@@ -2,6 +2,7 @@ import pygame
 import engine
 import level
 import menu
+import sys
 
 import utilities
 from config import *
@@ -21,27 +22,31 @@ class Scene:
         pass
 
 class MainMenuScene(Scene):
-    def input(self, sm):
-        # keys = pygame.key.get_pressed()
-        # if keys[pygame.K_RETURN]:
-        #     sm.push(FadeTransitionScene(self, LevelSelectScene()))
-        mouse_pos = pygame.mouse.get_pos()
-        click = pygame.mouse.get_pressed()
-        # if menu.Button1.collidepoint(mouse_pos):
-        if click[0]:
-            sm.push(FadeTransitionScene(self, LevelSelectScene()))
-        if click[2]:
-            pygame.quit()
-
+    # def input(self, sm):
+    #     # keys = pygame.key.get_pressed()
+    #     # if keys[pygame.K_RETURN]:
+    #     #     sm.push(FadeTransitionScene(self, LevelSelectScene()))
+    #     mouse_pos = pygame.mouse.get_pos()
+    #     click = pygame.mouse.get_pressed()
+    #     # if menu.Button1.collidepoint(mouse_pos):
+    #     if click[0]:
+    #         sm.push(FadeTransitionScene(self, LevelSelectScene()))
+    #     if click[2]:
+    #         pygame.quit()
 
     def draw(self, sm, window):
-        button1 = menu.Button1(self, 'Play Game', 150, 50, (270, 170), 6)
-        button2 = menu.Button2(self, 'Quit', 100, 30, (295, 255), 6)
+        button1 = menu.Button(self, 'Play Game', 150, 50, (270, 170), 6)
+        button2 = menu.Button(self, 'Quit', 100, 30, (295, 255), 6)
         menu_bg = pygame.image.load("images/Background/menu_bg.png")
         window.blit(menu_bg, (0, 0))
         button1.draw()
         button2.draw()
         # button1.check_click()
+        if button1.pressed:
+            sm.push(FadeTransitionScene(self, LevelSelectScene()))
+        if button2.pressed:
+            pygame.quit()
+            sys.exit()
 
 
 class LevelSelectScene(Scene):
