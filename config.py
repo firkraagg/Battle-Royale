@@ -1,8 +1,7 @@
 GAME_WIDTH = 720
 GAME_HEIGHT = 480
 
-levels = {}
-prison = None
+coin_number = 0
 
 FPS = 60
 

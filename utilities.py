@@ -5,12 +5,12 @@ from config import *
 pygame.init()
 
 
-coin1 = pygame.image.load('images/Coins/coin.png')
+coin_im = pygame.image.load('images/Coins/coin.png')
 
 def makeCoin(x, y):
     entity = engine.Entity()
     entity.position = engine.Position(x,y,1,1)
-    entityAnimation = engine.Animation([coin1])
+    entityAnimation = engine.Animation([coin_im])
     entity.animations.add('standing', entityAnimation)
     entity.type = 'collectable'
     return entity
@@ -72,12 +72,31 @@ def makePlayer(x, y):
     entity.type = 'player'
     return entity
 
+def makeBackground(name):
+    window = pygame.display.set_mode((720, 480))
+    window.blit(name, (0, 0))
+
+
+def makeDoor(window):
+    p1 = pygame.Rect(656, 250, 10, 100)
+    pygame.draw.rect(window, BLACK, p1)
+
+
 def draw_text(window, text, size, x, y):
     font = pygame.font.SysFont('franklingothicmedium', size)
     text = font.render(text, True, WHITE)
     text_rectangle = text.get_rect()
     text_rectangle.center = (x, y)
     window.blit(text, text_rectangle)
+
+def draw_coinText(window,text, x, y):
+    font = pygame.font.SysFont('franklingothicmedium', 25)
+    text = font.render(text, True, WHITE)
+    text_rectangle = text.get_rect()
+    text_rectangle.topleft = (x, y)
+    # window = pygame.display.set_mode((720, 480))
+    window.blit(text, text_rectangle)
+
 
 
 #
@@ -126,6 +145,21 @@ def intro_text(window, text, size, x, y):
     window.blit(dialogue_surface7, (270, 320))
 
 
+
+
+def npcName(window):
+    # p_background = pygame.image.load('images/Prison/prison.png')
+    # p_background = pygame.transform.scale(p_background, (GAME_WIDTH, GAME_HEIGHT))
+    # window.blit(p_background, (0, 0))
+    # coin_count_image = pygame.image.load('images/Coins/coin.png')
+    # coin_count_image = pygame.transform.scale(coin_count_image, (25, 30))
+    gui_font = pygame.font.SysFont('franklingothicmedium', 24)
+    text = "Spiculus"
+    name_surface = gui_font.render(text, False, '#FFFFFF')
+    window.blit(name_surface, (180, 215))
+    # window.blit(coin_count_image, (50, 50))
+    # coin_number = 0
+    # draw_coinText(window, str(coin_number), 80, 52)
 
 
 

@@ -1,0 +1,2 @@
+levels = {}
+world = None
