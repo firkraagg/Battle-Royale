@@ -4,6 +4,7 @@ import globals
 import utilities
 import menu
 import random
+import time
 import inputstream
 
 class System():
@@ -254,23 +255,36 @@ class CameraSystem1(System):
         window.set_clip(None)
         font = pygame.font.SysFont('franklingothicmedium', 15)
 
-        potion_image = pygame.image.load('images/ShopItems/potion.png').convert_alpha()
+        potion_image = pygame.image.load('images/ShopItems/potion.png')
         potion_button = menu.Button1(window, 100, 250, potion_image, 40, 40)
         sword_image = pygame.image.load("images/ShopItems/sword.png")
         sword_image = pygame.transform.scale(sword_image, (60, 60))
         potion = False
         potion_effect = 5
         fullhp_effect = 0
-        # current_fighter = 1
-        # total_fighters = 2
-        action_cooldown = 0
-        action_wait_time = 90
+        # action_cooldown = 0
+        # action_wait_time = 90
         # last = pygame.time.get_ticks()
-        # wait = 2000
-        click = pygame.mouse.get_pressed()[0]
+        wait = 2000
+        # click = pygame.mouse.get_pressed()[0]
         rand = random.randint(0, 5)
-        enemy_rand = random.randint(6, 10)
+        enemy_rand = random.randint(8, 12)
         p_damage = entity.damage.damage + rand
+        pos = pygame.mouse.get_pos()
+
+        if entity.type == "enemy":
+            if entity.rect.collidepoint(pos):
+                pygame.mouse.set_visible(False)
+                window.blit(utilities.cursor_image, pos)
+            else:
+                pygame.mouse.set_visible(True)
+
+        if entity.type == "buyable":
+            if entity.rect.collidepoint(pos):
+                pygame.mouse.set_visible(False)
+                window.blit(utilities.potion_image, pos)
+            else:
+                pygame.mouse.set_visible(True)
 
         if potion_button.draw():
             potion = True
@@ -288,26 +302,34 @@ class CameraSystem1(System):
                         entity.potions.potions -= 1
 
         if entity.type == "player":
+            if entity.health.health == 0:
+                window.blit(utilities.lost_surface, (300, 200))
             if entity.current_fighter == 1:
-                window.blit(utilities.turn_surface1, (320, 100))
+                # window.blit(utilities.turn_surface1, (320, 100))
                 for otherEntity in globals.world.entities:
                     if otherEntity is not entity and otherEntity.type == 'enemy':
-                        window.blit(utilities.turn_surface2, (300, 100))
-                        if click:
-                            if otherEntity.enemyHealth.enemyHealth >= 1:
-                                if entity.health.health >= 1:
-                                    otherEntity.enemyHealth.enemyHealth -= p_damage
-                                    entity.current_fighter = 2
-                                    if otherEntity.enemyHealth.enemyHealth < 1:
-                                        otherEntity.enemyHealth.enemyHealth = 0
-                                    if otherEntity.enemyHealth.enemyHealth >= 1:
-                                        if entity.current_fighter == 2:
-                                            # window.blit(utilities.turn_surface2, (300, 100))
-                                            entity.health.health -= enemy_rand
-                                            entity.current_fighter = 1
-                                        if entity.health.health < 1:
-                                            entity.health.health = 0
+                        if otherEntity.rect.collidepoint(pos):
+                            for event in pygame.event.get():
+                                if event.type == pygame.MOUSEBUTTONDOWN:
+                                    clicked = True
 
+                                    if clicked == True:
+                                        if otherEntity.enemyHealth.enemyHealth >= 1:
+                                            if entity.health.health >= 1:
+                                                otherEntity.enemyHealth.enemyHealth -= p_damage
+                                                entity.current_fighter = 2
+                                                if otherEntity.enemyHealth.enemyHealth < 1:
+                                                    otherEntity.enemyHealth.enemyHealth = 0
+                                                if otherEntity.enemyHealth.enemyHealth >= 1:
+                                                    if entity.current_fighter == 2:
+                                                        # window.blit(utilities.turn_surface2, (300, 100))
+                                                        entity.health.health -= enemy_rand
+                                                        entity.current_fighter = 1
+                                                    if entity.health.health < 1:
+                                                        entity.health.health = 0
+        if entity.type == "enemy":
+            if entity.enemyHealth.enemyHealth == 0:
+                window.blit(utilities.won_surface, (300, 200))
 
             # pygame.mouse.set_visible(True)
             # pos = pygame.mouse.get_pos()

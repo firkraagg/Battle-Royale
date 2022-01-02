@@ -2,8 +2,7 @@ import pygame
 from config import *
 
 class Button:
-    def __init__(self, game, text, width, height, pos, elevation):
-        self.game = game
+    def __init__(self, text, width, height, pos, elevation):
         self.pressed = False
         self.elevation = elevation
         self.dynamic_elevation = elevation
@@ -46,3 +45,28 @@ class Button:
         else:
             self.dynamic_elevation = self.elevation
             self.top_color = '#475F90'
+
+class Button1():
+	def __init__(self, surface, x, y, image, size_x, size_y):
+		self.image = pygame.transform.scale(image, (size_x, size_y))
+		self.rect = self.image.get_rect()
+		self.rect.topleft = (x, y)
+		self.clicked = False
+		self.surface = surface
+
+	def draw(self):
+		action = False
+
+		pos = pygame.mouse.get_pos()
+
+		if self.rect.collidepoint(pos):
+			if pygame.mouse.get_pressed()[0] == 1 and self.clicked == False:
+				action = True
+				self.clicked = True
+
+		if pygame.mouse.get_pressed()[0] == 0:
+			self.clicked = False
+
+		self.surface.blit(self.image, (self.rect.x, self.rect.y))
+
+		return action
