@@ -66,7 +66,7 @@ class GameScene(Scene):
         if inputStream.keyboard.isKeyPressed(pygame.K_ESCAPE):
             sm.pop()
             sm.push(FadeTransitionScene(self, MainMenuScene()))
-            level.loadLevel()
+            # level.loadLevel()
         if inputStream.keyboard.isKeyPressed(pygame.K_1):
             globals.soundManager.playSound("room_doors")
             globals.world = globals.levels[2]
@@ -83,9 +83,6 @@ class GameScene(Scene):
         globals.world = globals.levels[1]
         utilities.npcName(window, "Spiculus", WHITE, 370, 215)
         self.cameraSystem.update(window)
-
-
-
 
 class HallScene(Scene):
     def __init__(self):
@@ -179,6 +176,7 @@ class ArenaScene(Scene):
         # self.cameraSystem = engine.CameraSystem()
         self.cameraSystem1 = engine.CameraSystem1()
         self.physicsSystem = engine.PhysicsSystem()
+        self.conditionSystem = engine.ConditionSystem()
     def input(self, sm, inputStream):
         if inputStream.keyboard.isKeyPressed(pygame.K_ESCAPE):
             sm.pop()
@@ -193,16 +191,15 @@ class ArenaScene(Scene):
     def update(self, sm, inputStream):
         self.inputSystem.update(inputStream=inputStream)
         self.physicsSystem.update()
+        self.conditionSystem.update()
         # self.physicsSystem = engine.PhysicsSystem()
         # self.cameraSystem.update()
     def draw(self, sm, window):
-        # fight.arena(window)
         arena_bg = pygame.image.load("images/Arena/arena_bg.png")
         arena_bg = pygame.transform.scale(arena_bg, (GAME_WIDTH, GAME_HEIGHT))
         window.blit(arena_bg, (0, 0))
         globals.world = globals.levels[4]
         self.cameraSystem1.update(window)
-        # self.cameraSystem.update(window)
 
 class HallScene1(Scene):
     def __init__(self):
@@ -409,8 +406,8 @@ class ArenaScene2(Scene):
                 if inputStream.keyboard.isKeyPressed(pygame.K_4):
                     globals.soundManager.playSound("arena_doors")
                     sm.pop()
-                    sm.push(FadeTransitionScene(self, HallScene2()))
-                    globals.world = globals.levels[8]
+                    sm.push(FadeTransitionScene(self, HallScene3()))
+                    globals.world = globals.levels[11]
 
     def update(self, sm, inputStream):
         self.inputSystem.update(inputStream=inputStream)
@@ -424,6 +421,258 @@ class ArenaScene2(Scene):
         globals.world = globals.levels[10]
         self.cameraSystem1.update(window)
         # self.cameraSystem.update(window)
+
+class HallScene3(Scene):
+    def __init__(self):
+        self.cameraSystem = engine.CameraSystem()
+        self.collectionSystem = engine.CollectionSystem()
+        self.physicsSystem = engine.PhysicsSystem()
+        self.inputSystem = engine.InputSystem()
+    def input(self, sm, inputStream):
+        if inputStream.keyboard.isKeyPressed(pygame.K_ESCAPE):
+            sm.pop()
+            sm.push(FadeTransitionScene(self, MainMenuScene()))
+        if inputStream.keyboard.isKeyPressed(pygame.K_2):
+            globals.soundManager.playSound("room_doors")
+            sm.pop()
+            sm.push(FadeTransitionScene(self, ShopScene3()))
+            globals.world = globals.levels[12]
+        if inputStream.keyboard.isKeyPressed(pygame.K_3):
+            globals.soundManager.playSound("arena_doors")
+            globals.world = globals.levels[13]
+            sm.pop()
+            sm.push(FadeTransitionScene(self, ArenaScene3()))
+    def update(self, sm, inputStream):
+        self.inputSystem.update(inputStream=inputStream)
+        self.collectionSystem.update()
+        self.physicsSystem.update()
+    def draw(self, sm, window):
+        hall_bg = pygame.image.load("images/Backgrounds/hall_bg.png")
+        hall_bg = pygame.transform.scale(hall_bg, (GAME_WIDTH, GAME_HEIGHT))
+        window.blit(hall_bg, (0, 0))
+        window.blit(utilities.poisonArrow_hintSurface1, (20, 410))
+        window.blit(utilities.poisonArrow_hintSurface2, (20, 430))
+        window.blit(utilities.poisonArrow_hintSurface3, (20, 450))
+        globals.world = globals.levels[11]
+        self.cameraSystem.update(window)
+        font = pygame.font.SysFont('franklingothicmedium', 15)
+        shop_text = "Press 2 to go to the shop"
+        arena_text = "Press 3 to go to the Arena"
+        shop_surface = font.render(shop_text, False, '#FFFFFF')
+        arena_surface = font.render(arena_text, False, '#FFFFFF')
+        window.blit(shop_surface, (500, 225))
+        window.blit(arena_surface, (285, 200))
+
+class ShopScene3(Scene):
+    def __init__(self):
+        self.cameraSystem = engine.CameraSystem()
+        self.collectionSystem = engine.CollectionSystem()
+        self.physicsSystem = engine.PhysicsSystem()
+        self.inputSystem = engine.InputSystem()
+        self.shopSystem = engine.ShopSystem()
+    def input(self, sm, inputStream):
+        if inputStream.keyboard.isKeyPressed(pygame.K_ESCAPE):
+            sm.pop()
+            sm.push(FadeTransitionScene(self, MainMenuScene()))
+        if inputStream.keyboard.isKeyPressed(pygame.K_b):
+            globals.soundManager.playSound("room_doors")
+            globals.world = globals.levels[11]
+            sm.pop()
+            sm.push(FadeTransitionScene(self, HallScene3()))
+    def update(self, sm, inputStream):
+        self.inputSystem.update(inputStream=inputStream)
+        self.collectionSystem.update()
+        self.physicsSystem.update()
+        self.shopSystem.update()
+    def draw(self, sm, window):
+        shop_bg1 = pygame.image.load("images/Backgrounds/shop_bg1.png")
+        shop_bg1 = pygame.transform.scale(shop_bg1, (GAME_WIDTH, GAME_HEIGHT))
+        window.blit(shop_bg1, (0, 0))
+        globals.world = globals.levels[12]
+        window.blit(utilities.shield_surface, (250, 325))
+        window.blit(utilities.armor_surface, (320, 325))
+        window.blit(utilities.potion_surface, (435, 325))
+        window.blit(utilities.scost_surface, (240, 340))
+        window.blit(utilities.acost_surface, (312, 340))
+        window.blit(utilities.pcost_surface, (430, 340))
+        window.blit(utilities.shop_hintSurface, (20, 450))
+        window.blit(utilities.poisonPotion_surface, (560, 325))
+        window.blit(utilities.pcost_surface, (570, 340))
+        self.cameraSystem.update(window)
+        font = pygame.font.SysFont('franklingothicmedium', 15)
+        hall_surface = font.render(utilities.hall_text, False, '#FFFFFF')
+        window.blit(hall_surface, (460, 225))
+        utilities.makeShopKeeper(250, 245)
+
+class ArenaScene3(Scene):
+    def __init__(self):
+        self.inputSystem = engine.InputSystem()
+        # self.cameraSystem = engine.CameraSystem()
+        self.cameraSystem1 = engine.CameraSystem1()
+        self.physicsSystem = engine.PhysicsSystem()
+        self.conditionSystem = engine.ConditionSystem()
+    def input(self, sm, inputStream):
+        if inputStream.keyboard.isKeyPressed(pygame.K_ESCAPE):
+            sm.pop()
+            sm.push(FadeTransitionScene(self, MainMenuScene()))
+        for entity in globals.world.entities:
+            if entity.score.score >= 30:
+                if inputStream.keyboard.isKeyPressed(pygame.K_4):
+                    globals.soundManager.playSound("arena_doors")
+                    sm.pop()
+                    sm.push(FadeTransitionScene(self, HallScene4()))
+                    globals.world = globals.levels[14]
+
+    def update(self, sm, inputStream):
+        self.inputSystem.update(inputStream=inputStream)
+        self.physicsSystem.update()
+        self.conditionSystem.update()
+        # self.physicsSystem = engine.PhysicsSystem()
+        # self.cameraSystem.update()
+    def draw(self, sm, window):
+        arena_bg = pygame.image.load("images/Arena/arena_bg.png")
+        arena_bg = pygame.transform.scale(arena_bg, (GAME_WIDTH, GAME_HEIGHT))
+        window.blit(arena_bg, (0, 0))
+        globals.world = globals.levels[13]
+        self.cameraSystem1.update(window)
+        # self.cameraSystem.update(window)
+
+class HallScene4(Scene):
+    def __init__(self):
+        self.cameraSystem = engine.CameraSystem()
+        self.collectionSystem = engine.CollectionSystem()
+        self.physicsSystem = engine.PhysicsSystem()
+        self.inputSystem = engine.InputSystem()
+    def input(self, sm, inputStream):
+        if inputStream.keyboard.isKeyPressed(pygame.K_ESCAPE):
+            sm.pop()
+            sm.push(FadeTransitionScene(self, MainMenuScene()))
+        if inputStream.keyboard.isKeyPressed(pygame.K_2):
+            globals.soundManager.playSound("room_doors")
+            sm.pop()
+            sm.push(FadeTransitionScene(self, ShopScene4()))
+            globals.world = globals.levels[15]
+        if inputStream.keyboard.isKeyPressed(pygame.K_3):
+            globals.soundManager.playSound("arena_doors")
+            globals.world = globals.levels[16]
+            sm.pop()
+            sm.push(FadeTransitionScene(self, ArenaScene4()))
+    def update(self, sm, inputStream):
+        self.inputSystem.update(inputStream=inputStream)
+        self.collectionSystem.update()
+        self.physicsSystem.update()
+    def draw(self, sm, window):
+        hall_bg = pygame.image.load("images/Backgrounds/hall_bg.png")
+        hall_bg = pygame.transform.scale(hall_bg, (GAME_WIDTH, GAME_HEIGHT))
+        window.blit(hall_bg, (0, 0))
+        window.blit(utilities.boss_hintSurface, (20, 430))
+        globals.world = globals.levels[14]
+        self.cameraSystem.update(window)
+        font = pygame.font.SysFont('franklingothicmedium', 15)
+        shop_text = "Press 2 to go to the shop"
+        arena_text = "Press 3 to go to the Arena"
+        shop_surface = font.render(shop_text, False, '#FFFFFF')
+        arena_surface = font.render(arena_text, False, '#FFFFFF')
+        window.blit(shop_surface, (500, 225))
+        window.blit(arena_surface, (285, 200))
+
+class ShopScene4(Scene):
+    def __init__(self):
+        self.cameraSystem = engine.CameraSystem()
+        self.collectionSystem = engine.CollectionSystem()
+        self.physicsSystem = engine.PhysicsSystem()
+        self.inputSystem = engine.InputSystem()
+        self.shopSystem = engine.ShopSystem()
+    def input(self, sm, inputStream):
+        if inputStream.keyboard.isKeyPressed(pygame.K_ESCAPE):
+            sm.pop()
+            sm.push(FadeTransitionScene(self, MainMenuScene()))
+        if inputStream.keyboard.isKeyPressed(pygame.K_b):
+            globals.soundManager.playSound("room_doors")
+            globals.world = globals.levels[14]
+            sm.pop()
+            sm.push(FadeTransitionScene(self, HallScene4()))
+    def update(self, sm, inputStream):
+        self.inputSystem.update(inputStream=inputStream)
+        self.collectionSystem.update()
+        self.physicsSystem.update()
+        self.shopSystem.update()
+    def draw(self, sm, window):
+        shop_bg1 = pygame.image.load("images/Backgrounds/shop_bg1.png")
+        shop_bg1 = pygame.transform.scale(shop_bg1, (GAME_WIDTH, GAME_HEIGHT))
+        window.blit(shop_bg1, (0, 0))
+        globals.world = globals.levels[15]
+        window.blit(utilities.sword_surface, (250, 325))
+        window.blit(utilities.armor_surface, (320, 325))
+        window.blit(utilities.potion_surface, (435, 325))
+        window.blit(utilities.scost_surface, (240, 340))
+        window.blit(utilities.acost_surface, (312, 340))
+        window.blit(utilities.pcost_surface, (430, 340))
+        window.blit(utilities.shop_hintSurface, (20, 450))
+        window.blit(utilities.poisonPotion_surface, (560, 325))
+        window.blit(utilities.pcost_surface, (570, 340))
+        self.cameraSystem.update(window)
+        font = pygame.font.SysFont('franklingothicmedium', 15)
+        hall_surface = font.render(utilities.hall_text, False, '#FFFFFF')
+        window.blit(hall_surface, (460, 225))
+        utilities.makeShopKeeper(250, 245)
+
+class ArenaScene4(Scene):
+    def __init__(self):
+        self.inputSystem = engine.InputSystem()
+        # self.cameraSystem = engine.CameraSystem()
+        self.cameraSystem1 = engine.CameraSystem1()
+        self.physicsSystem = engine.PhysicsSystem()
+        self.conditionSystem = engine.ConditionSystem()
+    def input(self, sm, inputStream):
+        if inputStream.keyboard.isKeyPressed(pygame.K_ESCAPE):
+            sm.pop()
+            sm.push(FadeTransitionScene(self, MainMenuScene()))
+        for entity in globals.world.entities:
+            if entity.score.score >= 30:
+                if inputStream.keyboard.isKeyPressed(pygame.K_4):
+                    globals.soundManager.playSound("arena_doors")
+                    sm.pop()
+                    sm.push(FadeTransitionScene(self, GameWonScene()))
+                    # globals.world = globals.levels[17]
+
+    def update(self, sm, inputStream):
+        self.inputSystem.update(inputStream=inputStream)
+        self.physicsSystem.update()
+        self.conditionSystem.update()
+        # self.physicsSystem = engine.PhysicsSystem()
+        # self.cameraSystem.update()
+    def draw(self, sm, window):
+        arena_bg = pygame.image.load("images/Arena/arena_bg.png")
+        arena_bg = pygame.transform.scale(arena_bg, (GAME_WIDTH, GAME_HEIGHT))
+        window.blit(arena_bg, (0, 0))
+        globals.world = globals.levels[16]
+        self.cameraSystem1.update(window)
+        # self.cameraSystem.update(window)
+
+class GameWonScene(Scene):
+    def __init__(self):
+        pass
+    def input(self, sm, inputStream):
+        if inputStream.keyboard.isKeyPressed(pygame.K_ESCAPE):
+            sm.pop()
+            sm.push(FadeTransitionScene(self, MainMenuScene()))
+        for entity in globals.world.entities:
+            if entity.score.score >= 30:
+                if inputStream.keyboard.isKeyPressed(pygame.K_4):
+                    globals.soundManager.playSound("arena_doors")
+                    sm.pop()
+                    sm.push(FadeTransitionScene(self, GameWonScene()))
+                    # globals.world = globals.levels[17]
+
+    def update(self, sm, inputStream):
+        pass
+    def draw(self, sm, window):
+        hall_bg = pygame.image.load("images/Backgrounds/hall_bg.png")
+        hall_bg = pygame.transform.scale(hall_bg, (GAME_WIDTH, GAME_HEIGHT))
+        window.blit(hall_bg, (0, 0))
+        window.blit(utilities.gameWon_surface, (180, 150))
+        # globals.world = globals.levels[17]
 
 class TransitionScene(Scene):
     def __init__(self, fromScene, toScene):

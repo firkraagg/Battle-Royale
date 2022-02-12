@@ -13,7 +13,11 @@ class SoundManager:
             "smash": pygame.mixer.Sound("sounds/smash.mp3"),
             "elixir": pygame.mixer.Sound("sounds/elixir.wav"),
             "elixir_drink": pygame.mixer.Sound("sounds/elixir_drink.mp3"),
-            # "player_walking" : pygame.mixer.Sound("sounds/player_walking.mp3")
+            "player_pain": pygame.mixer.Sound("sounds/player_pain.mp3"),
+            "enemy_pain": pygame.mixer.Sound("sounds/enemy_pain.mp3"),
+            "arrow_shot": pygame.mixer.Sound("sounds/arrow_shot.mp3"),
+            "shield_block": pygame.mixer.Sound("sounds/shield_block.mp3"),
+            "poison": pygame.mixer.Sound("sounds/poison.mp3")
         }
         self.music = {
 
