@@ -54,11 +54,10 @@ player.health = engine.Health()
 player.maxHealth = engine.MaxHealth()
 player.swordLvl = engine.SwordLvl()
 player.shieldLvl = engine.ShieldLvl()
-player.input = engine.Input(pygame.K_a, pygame.K_d, pygame.K_e, pygame.K_SPACE)
+player.input = engine.Input(pygame.K_a, pygame.K_d, pygame.K_w, pygame.K_e, pygame.K_SPACE)
 player.intention = engine.Intention()
 score = 0
 
-# player1 = player
 player1 = utilities.makePlayer1(500, 265)
 player1.camera = engine.Camera(0, 0, 920, 525)
 player1.score = player.score
@@ -66,10 +65,10 @@ player1.potions = player.potions
 player1.poisonPotions = player.poisonPotions
 player1.damage = player.damage
 player1.health = player.health
-player1.maxHealth = engine.MaxHealth()
+player1.maxHealth = player.maxHealth
 player1.swordLvl = player.swordLvl
 player1.shieldLvl = player.shieldLvl
-player1.input = engine.Input(pygame.K_a, pygame.K_d, pygame.K_e, pygame.K_SPACE)
+player1.input = engine.Input(pygame.K_a, pygame.K_d, pygame.K_w, pygame.K_e, pygame.K_SPACE)
 player1.intention = engine.Intention()
 
 enemy = utilities.makeEnemy(190, 245, 5, 1)
@@ -102,7 +101,7 @@ enemy3.score = player.score
 enemy3.potions = player.potions
 enemy3.poisonPotions = player.poisonPotions
 enemy3.damage = player.damage
-enemy3.enemyHealth = engine.Enemy2Health()
+enemy3.enemyHealth = engine.Enemy3Health()
 
 enemy4 = utilities.makeEnemy4(190, 181, 10, 1)
 enemy4.camera = engine.Camera(0, 0, 920, 525)
@@ -128,7 +127,7 @@ poisonArrow.poisonPotions = player.poisonPotions
 poisonArrow.damage = player.damage
 poisonArrow.health = player.health
 
-ball = utilities.makeBall(290, 235)
+ball = utilities.makeBall(290, 290)
 ball.camera = engine.Camera(0, 0, 920, 525)
 ball.score = player.score
 ball.potions = player.potions
@@ -143,7 +142,7 @@ def update():
 
 globals.levels[1] = level.Level(
     platforms=[
-        pygame.Rect(52, 350, 610, 5),
+        pygame.Rect(52, 286, 610, 5),
 
         pygame.Rect(50, 405, 5, 50),
 
@@ -160,7 +159,7 @@ globals.levels[1] = level.Level(
 )
 globals.levels[2] = level.Level(
     platforms=[
-        pygame.Rect(52, 350, 610, 5),
+        pygame.Rect(52, 283, 610, 5),
 
         pygame.Rect(50, 405, 5, 50),
 
@@ -176,7 +175,7 @@ globals.levels[2] = level.Level(
 
 globals.levels[3] = level.Level(
     platforms=[
-        pygame.Rect(52, 350, 610, 5),
+        pygame.Rect(52, 286, 610, 5),
 
         pygame.Rect(50, 405, 5, 50),
 
@@ -192,7 +191,7 @@ globals.levels[3] = level.Level(
 
 globals.levels[4] = level.Level(
     platforms=[
-        pygame.Rect(52, 350, 610, 5),
+        pygame.Rect(52, 337, 610, 5),
 
         pygame.Rect(1, 405, 5, 50),
 
@@ -209,7 +208,7 @@ globals.levels[4] = level.Level(
 
 globals.levels[5] = level.Level(
     platforms=[
-        pygame.Rect(52, 350, 610, 5),
+        pygame.Rect(52, 283, 610, 5),
 
         pygame.Rect(50, 405, 5, 50),
 
@@ -225,7 +224,7 @@ globals.levels[5] = level.Level(
 
 globals.levels[6] = level.Level(
     platforms=[
-        pygame.Rect(52, 350, 610, 5),
+        pygame.Rect(52, 286, 610, 5),
 
         pygame.Rect(50, 405, 5, 50),
 
@@ -241,7 +240,7 @@ globals.levels[6] = level.Level(
 
 globals.levels[7] = level.Level(
     platforms=[
-        pygame.Rect(52, 350, 610, 5),
+        pygame.Rect(52, 340, 610, 5),
 
         pygame.Rect(25, 405, 5, 50),
 
@@ -257,7 +256,7 @@ globals.levels[7] = level.Level(
 
 globals.levels[8] = level.Level(
     platforms=[
-        pygame.Rect(52, 350, 610, 5),
+        pygame.Rect(52, 283, 610, 5),
 
         pygame.Rect(50, 405, 5, 50),
 
@@ -273,7 +272,7 @@ globals.levels[8] = level.Level(
 
 globals.levels[9] = level.Level(
     platforms=[
-        pygame.Rect(52, 350, 610, 5),
+        pygame.Rect(52, 286, 610, 5),
 
         pygame.Rect(50, 405, 5, 50),
 
@@ -289,7 +288,7 @@ globals.levels[9] = level.Level(
 
 globals.levels[10] = level.Level(
     platforms=[
-        pygame.Rect(52, 350, 610, 5),
+        pygame.Rect(52, 340, 610, 5),
 
         pygame.Rect(25, 405, 5, 50),
 
@@ -305,7 +304,7 @@ globals.levels[10] = level.Level(
 
 globals.levels[11] = level.Level(
     platforms=[
-        pygame.Rect(52, 350, 610, 5),
+        pygame.Rect(52, 283, 610, 5),
 
         pygame.Rect(50, 405, 5, 50),
 
@@ -321,7 +320,7 @@ globals.levels[11] = level.Level(
 
 globals.levels[12] = level.Level(
     platforms=[
-        pygame.Rect(52, 350, 610, 5),
+        pygame.Rect(52, 286, 610, 5),
 
         pygame.Rect(50, 405, 5, 50),
 
@@ -338,7 +337,7 @@ globals.levels[12] = level.Level(
 
 globals.levels[13] = level.Level(
     platforms=[
-        pygame.Rect(52, 350, 610, 5),
+        pygame.Rect(52, 340, 610, 5),
 
         pygame.Rect(25, 405, 5, 50),
 
@@ -354,7 +353,7 @@ globals.levels[13] = level.Level(
 
 globals.levels[14] = level.Level(
     platforms=[
-        pygame.Rect(52, 350, 610, 5),
+        pygame.Rect(52, 283, 610, 5),
 
         pygame.Rect(50, 405, 5, 50),
 
@@ -370,7 +369,7 @@ globals.levels[14] = level.Level(
 
 globals.levels[15] = level.Level(
     platforms=[
-        pygame.Rect(52, 350, 610, 5),
+        pygame.Rect(52, 286, 610, 5),
 
         pygame.Rect(50, 405, 5, 50),
 
@@ -386,7 +385,7 @@ globals.levels[15] = level.Level(
 
 globals.levels[16] = level.Level(
     platforms=[
-        pygame.Rect(52, 350, 610, 5),
+        pygame.Rect(52, 340, 610, 5),
 
         pygame.Rect(25, 405, 5, 50),
 
@@ -411,7 +410,7 @@ cameraSys1 = engine.CameraSystem1()
 
 entity = engine.Entity()
 running = True
-# projectile = utilities.Projectile((20, 310))
+
 while running:
     inputStream.processInput()
 
@@ -440,10 +439,6 @@ while running:
             if platform.colliderect(new_player_rect):
                 x_collision = True
                 break
-
-        for door in globals.world.doors:
-            if door.colliderect(new_player_rect):
-                window.blit(utilities.door_surface, (70, 225))
 
         if x_collision == False:
             player.position.rect.x = new_player_x
@@ -486,9 +481,7 @@ while running:
                                      globals.soundManager.playSound("buying")
                                      player.score.score -= 20
                                      player1.maxHealth.maxHealth += 7
-                                     player.maxHealth.maxHealth += 7
                                      player.health.health += 7
-                                     # player1.health.health += 7
                                      globals.world.entities.remove(entity)
                              if entity == shield:
                                  if player.score.score >= 20:
@@ -506,12 +499,6 @@ while running:
                             window.blit(utilities.dialogue_surface1, (0, 380)),
                             window.blit(utilities.dialogue_surface2, (0, 410)),
                             window.blit(utilities.dialogue_surface3, (0, 440))
-
-        # projectile.update()
-        # projectile.draw(window)
-        # if projectile.rect.colliderect(player_rect):
-        #     projectile.velocity = 1000
-        #     player.health.health -= 5
 
         update()
 
