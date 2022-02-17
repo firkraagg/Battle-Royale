@@ -1,13 +1,9 @@
 import pygame
-from config import *
+from globals import *
 import globals
 import utilities
-import menu
 import button
 import random
-import scene
-import inputstream
-
 
 class System():
     def __init__(self):
@@ -43,10 +39,11 @@ class InputSystem(System):
     def check(self, entity):
         return entity.input is not None and entity.intention is not None
     def updateEntity(self, window, inputStream, entity):
-        # if inputStream.keyboard.isKeyDown(entity.input.up):
-        #     entity.intention.jump = True
-        # else:
-        #     entity.intention.jump = False
+        if inputStream.keyboard.isKeyDown(entity.input.up):
+            entity.intention.jump = True
+            entity.acceleration = 0.1
+        else:
+            entity.intention.jump = False
         if inputStream.keyboard.isKeyDown(entity.input.left):
             entity.intention.moveLeft = True
         else:
@@ -132,8 +129,12 @@ class PhysicsSystem(System):
         return entity.position is not None
     def updateEntity(self, window, inputStream, entity):
         new_x = entity.position.rect.x
-        # new_y = entity.position.rect.y
+        new_y = entity.position.rect.y
         if entity.intention is not None:
+            if entity.intention.jump:
+                new_y -= 4
+                entity.intention.moveLeft = False
+                entity.intention.moveRight = False
             if entity.intention.moveLeft:
                 new_x -= 3
                 entity.direction = 'left'
@@ -144,41 +145,83 @@ class PhysicsSystem(System):
                 entity.state = 'walking'
             if not entity.intention.moveLeft and not entity.intention.moveRight:
                 entity.state = 'standing'
+                if entity.intention.jump:
+                    entity.state = "jumping"
+                    entity.intention.spacePressed = False
+            if entity.intention.jump and entity.on_ground:
+                globals.soundManager.playSound('jump')
             if entity.combat == True:
                 if not entity.intention.moveLeft and not entity.intention.moveRight:
                     if entity.shieldLvl.shieldLvl == 0:
                         entity.state = "standing1"
-                    else:
+                        if entity.intention.jump and entity.effect is None:
+                            entity.state = "jumping"
+                    if entity.shieldLvl.shieldLvl == 1:
                         entity.state = "standing2"
+                        if entity.intention.jump and entity.effect is None:
+                            entity.state = "jumping1"
+                    if entity.effect is not None:
+                        if entity.shieldLvl.shieldLvl == 0:
+                            entity.state = "poisonedStanding1"
+                            if entity.intention.jump:
+                                entity.state = "poisonedJumping"
+                        if entity.shieldLvl.shieldLvl == 1:
+                            entity.state = "poisonedStanding2"
+                            if entity.intention.jump:
+                                entity.state = "poisonedJumping1"
                 if entity.intention is not None:
                     if entity.intention.moveLeft:
                         new_x -= 2
                         entity.direction = 'left'
                         if entity.shieldLvl.shieldLvl == 0:
                             entity.state = 'walking1'
-                        else:
+                        if entity.shieldLvl.shieldLvl == 1:
                             entity.state = "walking2"
+                        if entity.effect is not None:
+                            if entity.shieldLvl.shieldLvl == 0:
+                                entity.state = "poisonedWalking1"
+                            if entity.shieldLvl.shieldLvl == 1:
+                                entity.state = "poisonedWalking2"
                     if entity.intention.moveRight:
                         new_x += 2
                         entity.direction = 'right'
                         if entity.shieldLvl.shieldLvl == 0:
                             entity.state = 'walking1'
-                        else:
+                        if entity.shieldLvl.shieldLvl == 1:
                             entity.state = "walking2"
+                        if entity.effect is not None:
+                            if entity.shieldLvl.shieldLvl == 0:
+                                entity.state = "poisonedWalking1"
+                            if entity.shieldLvl.shieldLvl == 1:
+                                entity.state = "poisonedWalking2"
                     if entity.intention.ePressed:
                         if entity.shieldLvl.shieldLvl == 0:
                             entity.state = 'fighting'
-                        else:
+                        if entity.shieldLvl.shieldLvl == 1:
                             entity.state = "fighting2"
+                        if entity.effect is not None:
+                            if entity.shieldLvl.shieldLvl == 0:
+                                entity.state = "poisonedFighting1"
+                            if entity.shieldLvl.shieldLvl == 1:
+                                entity.state = "poisonedFighting2"
                     if entity.shieldLvl.shieldLvl == 1:
                         if entity.intention.spacePressed:
-                            entity.state = "block1"
-                            if entity.state == "block1":
-                                if entity.intention.moveRight:
-                                    new_x -= 4
-                                if entity.intention.moveLeft:
-                                    new_x += 4
-                            entity.health.health -= 0
+                            if entity.effect is None:
+                                entity.state = "block1"
+                                if entity.state == "block1":
+                                    if entity.intention.moveRight:
+                                        new_x -= 4
+                                    if entity.intention.moveLeft:
+                                        new_x += 4
+                                entity.health.health -= 0
+                            if entity.effect is not None:
+                                entity.state = "poisonedBlock1"
+                                if entity.state == "poisonedBlock1":
+                                    if entity.intention.moveRight:
+                                        new_x -= 4
+                                    if entity.intention.moveLeft:
+                                        new_x += 4
+                                entity.health.health -= 0
 
                     if entity.health.health == 0:
                         entity.state = "death"
@@ -188,15 +231,13 @@ class PhysicsSystem(System):
                             new_x -= 5
                             entity.direction = 'left'
 
-            # if entity.intention.jump and entity.on_ground:
-            #     entity.speed -= 5
             entity.movement = True
             for otherEntity in globals.world.entities:
                 enemy_x_change = random.randint(1, 5)
                 enemy_x_change1 = random.randint(1, 5)
                 rand_pos = random.randint(200, 400)
                 rand_pos1 = random.randint(50, 100)
-                rand_pos2 = random.randint(400, 500)
+                rand_pos2 = random.randint(400, 600)
                 if otherEntity is not entity and otherEntity.type == 'enemy':
                     if otherEntity.name == "Enemy0" or otherEntity.name == "Enemy1":
                         if otherEntity.enemyHealth.enemyHealth >= 1:
@@ -255,9 +296,8 @@ class PhysicsSystem(System):
                                     otherEntity.state = "walking"
                                     otherEntity.position.rect.x -= enemy_x_change
 
-                    enemy_rand_attack = random.randint(10, 35)
-                    enemy_rand_dmg = random.randint(10, 12)
-
+                    enemy_rand_attack = random.randint(10, 40)
+                    enemy_rand_dmg = random.randint(8, 12)
                     if otherEntity.position.rect.x > entity.position.rect.x:
                         otherEntity.direction = "right"
                     else:
@@ -342,8 +382,6 @@ class PhysicsSystem(System):
                     if entity.health.health == 0:
                         otherEntity.state = "walking"
 
-
-
         new_x_rect = pygame.Rect(int(new_x), 400, 72, 72)
         x_collision = False
 
@@ -355,34 +393,31 @@ class PhysicsSystem(System):
         if x_collision == False:
             entity.position.rect.x = new_x
 
+        entity.speed += entity.acceleration
+        new_y += entity.speed
 
-        # entity.speed += entity.acceleration
-        # new_y += entity.speed
-        #
-        # new_y_rect = pygame.Rect(int(entity.position.rect.x), int (new_y), entity.position.rect.width, entity.position.rect.height)
-        #
-        # y_collision = False
-        # entity.on_ground = False
-        #
-        # for platform in globals.world.platforms:
-        #     if platform.colliderect(new_y_rect):
-        #         y_collision = True
-        #         entity.speed = 0
-        #         if platform[1] > new_y:
-        #             entity.position.rect.y = platform[1] - entity.position.rect.height
-        #             entity.on_ground = True
-        #         break
-        # if y_collision == False:
-        #     entity.position.rect.y = int(new_y)
-        #
+        new_y_rect = pygame.Rect(int(new_x), int(new_y), 72, 72)
+        y_collision = False
+        entity.on_ground = False
+
+        for platform in globals.world.platforms:
+            if platform.colliderect(new_y_rect):
+                y_collision = True
+                entity.speed = 0
+                entity.acceleration = 0
+                if platform[1] > new_y:
+                    if entity.type == "player":
+                        entity.on_ground = True
+                    break
+
+        if y_collision == False:
+            entity.position.rect.y = new_y
+
         if entity.intention is not None:
             entity.intention.moveLeft = False
             entity.intention.moveRight = False
             entity.intention.ePressed = False
             entity.intention.spacePressed = False
-        #     entity.intension.jump = False
-
-
 
 class CameraSystem(System):
     def check(self, entity):
@@ -427,6 +462,18 @@ class CameraSystem(System):
         utilities.npcName(window, "DAMAGE", WHITE, 350, 20)
         utilities.npcName(window, "HEALTH", WHITE, 510, 20)
 
+        # save_button_image = pygame.image.load("images/save_button.png")
+        # save_button = button.Button1(window, 300, 400, save_button_image, 40, 40)
+        # save_button.draw()
+        # load_button_image = pygame.image.load("images/load_button.png")
+        # load_button = button.Button1(window, 380, 400, load_button_image, 40, 40)
+        # load_button.draw()
+        # if save_button.clicked:
+        #     level.save(entity)
+        #     print("saved")
+        # if load_button.clicked:
+        #     level.load(entity)
+        #     print("loading")
 
         window.set_clip(None)
 
@@ -489,27 +536,14 @@ class CameraSystem1(System):
 
         potion_image = pygame.image.load('images/ShopItems/potion.png')
         poisonPotion_image = pygame.image.load("images/ShopItems/poisonPotion.png")
-        potion_button = menu.Button1(window, 530, 430, potion_image, 40, 40)
-        poisonPotion_button = menu.Button1(window, 590, 430, poisonPotion_image, 40, 40)
-        sword_image = pygame.image.load("images/ShopItems/sword.png")
-        sword_image = pygame.transform.scale(sword_image, (60, 60))
+        potion_button = button.Button1(window, 530, 430, potion_image, 40, 40)
+        poisonPotion_button = button.Button1(window, 590, 430, poisonPotion_image, 40, 40)
         potion = False
         poisonPotion = False
         potion_effect = random.randint(4, 8)
         fullhp_effect = 0
-        # action_cooldown = 0
-        # action_wait_time = 90
-        # last = pygame.time.get_ticks()
-        # wait = 2000
-        # click = pygame.mouse.get_pressed()[0]
         rand = random.randint(2, 5)
-        enemy_rand = random.randint(10, 12)
         p_damage = entity.damage.damage + rand
-        pos = pygame.mouse.get_pos()
-        hit = False
-        attack = False
-        damage_taken = False
-        hit1 = False
 
         for otherEntity in globals.world.entities:
             if otherEntity is not entity and otherEntity.type == 'enemy':
@@ -543,65 +577,86 @@ class CameraSystem1(System):
                 rand_dmg = random.randint(4, 5)
                 if otherEntity1 is not entity and otherEntity1.type == 'shootable' and otherEntity2 is not entity and otherEntity2.type == "enemy":
                     if entity.type == "player":
-                        if otherEntity1.position.rect.x < entity.position.rect.x:
-                            otherEntity1.position.rect.x += enemy_x_change1
-                        if otherEntity1.position.rect.x > entity.position.rect.x:
-                            otherEntity1.position.rect.x -= enemy_x_change1
-                            if otherEntity1.position.rect.colliderect(entity.position.rect):
-                                otherEntity1.position.rect.x = otherEntity2.position.rect.x
-                                if entity.shieldLvl.shieldLvl == 0:
-                                    entity.health.health -= rand_dmg
-                                    globals.soundManager.playSound("arrow_shot")
-                                    globals.soundManager.playSound("player_pain")
-                                if entity.shieldLvl.shieldLvl == 1:
-                                    if entity.state == "block1":
-                                        entity.health.health -= 0
-                                        globals.soundManager.playSound("arrow_shot")
-                                        globals.soundManager.playSound("shield_block")
-                                    else:
-                                        entity.health.health -= rand_dmg
-                                        globals.soundManager.playSound("arrow_shot")
-                                        globals.soundManager.playSound("player_pain")
-
-                        if entity.health.health >= 1:
-                            if otherEntity1.position.rect.colliderect(entity.position.rect):
-                                otherEntity1.position.rect.x = otherEntity2.position.rect.x
-                                if entity.shieldLvl.shieldLvl == 0:
-                                    entity.health.health -= rand_dmg
-                                    globals.soundManager.playSound("arrow_shot")
-                                    globals.soundManager.playSound("player_pain")
-                                if entity.shieldLvl.shieldLvl == 1:
-                                    if entity.state == "block1":
-                                        entity.health.health -= 0
-                                        globals.soundManager.playSound("arrow_shot")
-                                        globals.soundManager.playSound("shield_block")
-                                    else:
-                                        entity.health.health -= rand_dmg
-                                        globals.soundManager.playSound("arrow_shot")
-                                        globals.soundManager.playSound("player_pain")
-                            if otherEntity1.type1 == "arrow" or otherEntity1.type1 == "poisonArrow":
-                                if entity.position.rect.x > 370:
-                                    otherEntity1.position.rect.x = -2000
-                                if entity.position.rect.x < 150:
-                                    otherEntity1.position.rect.x = -2000
-                                if otherEntity1.position.rect.x < 0:
-                                    otherEntity1.position.rect.x += entity.position.rect.x
-                            if otherEntity1.type1 == "ball":
-                                if entity.position.rect.x > 370:
-                                    otherEntity1.position.rect.x = -2000
-                                if entity.position.rect.x < 200 and entity.position.rect.x < otherEntity2.position.rect.x:
-                                    otherEntity1.position.rect.x = otherEntity2.position.rect.x
-                                if otherEntity1.position.rect.x < 0:
-                                    otherEntity1.position.rect.x += entity.position.rect.x
-                            if otherEntity1.position.rect.x >= entity.position.rect.x:
-                                otherEntity1.direction = "right"
-                            else:
+                        if entity.intention.jump:
+                            if otherEntity2.position.rect.x <= entity.position.rect.x:
+                                otherEntity1.position.rect.x += enemy_x_change1
                                 otherEntity1.direction = "left"
-                        if otherEntity2.enemyHealth.enemyHealth == 0:
-                            otherEntity1.position.rect.x = 1900
-                    if entity.type == "player":
-                        if entity.health.health == 0:
-                            otherEntity1.position.rect.x = 1900
+                            if otherEntity2.position.rect.x >= entity.position.rect.x:
+                                otherEntity1.position.rect.x -= enemy_x_change1
+                                otherEntity1.direction = "right"
+                                if otherEntity1.position.rect.colliderect(entity.position.rect):
+                                    otherEntity1.position.rect.x = otherEntity2.position.rect.x
+
+                        if not entity.intention.jump:
+                            if otherEntity1.position.rect.x < entity.position.rect.x:
+                                otherEntity1.position.rect.x += enemy_x_change1
+                            if otherEntity2.position.rect.x <= entity.position.rect.x:
+                                if otherEntity1.position.rect.x > entity.position.rect.x:
+                                    otherEntity1.position.rect.x += enemy_x_change1 * 2
+                            if otherEntity2.position.rect.x >= entity.position.rect.x:
+                                if otherEntity1.position.rect.x < entity.position.rect.x:
+                                    otherEntity1.position.rect.x -= enemy_x_change1 * 2
+
+                            if otherEntity1.position.rect.x > entity.position.rect.x:
+                                otherEntity1.position.rect.x -= enemy_x_change1
+                                if otherEntity1.position.rect.colliderect(entity.position.rect):
+                                    otherEntity1.position.rect.x = otherEntity2.position.rect.x
+                                    if entity.shieldLvl.shieldLvl == 0:
+                                        entity.health.health -= rand_dmg
+                                        globals.soundManager.playSound("arrow_shot")
+                                        globals.soundManager.playSound("player_pain")
+                                    if entity.shieldLvl.shieldLvl == 1:
+                                        if entity.state == "block1":
+                                            entity.health.health -= 0
+                                            globals.soundManager.playSound("arrow_shot")
+                                            globals.soundManager.playSound("shield_block")
+                                        else:
+                                            entity.health.health -= rand_dmg
+                                            globals.soundManager.playSound("arrow_shot")
+                                            globals.soundManager.playSound("player_pain")
+
+                            if entity.health.health >= 1:
+                                if otherEntity1.position.rect.colliderect(entity.position.rect):
+                                    otherEntity1.position.rect.x = otherEntity2.position.rect.x
+                                    if entity.shieldLvl.shieldLvl == 0:
+                                        entity.health.health -= rand_dmg
+                                        globals.soundManager.playSound("arrow_shot")
+                                        globals.soundManager.playSound("player_pain")
+                                    if entity.shieldLvl.shieldLvl == 1:
+                                        if entity.state == "block1":
+                                            rand_dmg = 0
+                                            entity.health.health -= rand_dmg
+                                            globals.soundManager.playSound("arrow_shot")
+                                            globals.soundManager.playSound("shield_block")
+                                        else:
+                                            entity.health.health -= rand_dmg
+                                            globals.soundManager.playSound("arrow_shot")
+                                            globals.soundManager.playSound("player_pain")
+                                if otherEntity1.type1 == "arrow" or otherEntity1.type1 == "poisonArrow":
+                                    if entity.position.rect.x > 370:
+                                        otherEntity1.position.rect.x = -2000
+                                    if entity.position.rect.x < 150:
+                                        otherEntity1.position.rect.x = -2000
+                                    if otherEntity1.position.rect.x < 0:
+                                        otherEntity1.position.rect.x += otherEntity2.position.rect.x
+                                if otherEntity1.type1 == "ball":
+                                    if entity.position.rect.x > 370:
+                                        otherEntity1.position.rect.x = -2000
+                                    if entity.position.rect.x < 200 and entity.position.rect.x < otherEntity2.position.rect.x:
+                                        otherEntity1.position.rect.x = -2000
+                                    if otherEntity1.position.rect.x < 0:
+                                        otherEntity1.position.rect.x += otherEntity2.position.rect.x
+                                if otherEntity1.position.rect.x > 720:
+                                    otherEntity1.position.rect.x = otherEntity2.position.rect.x
+                                if otherEntity2.position.rect.x <= entity.position.rect.x:
+                                    otherEntity1.direction = "left"
+                                if otherEntity2.position.rect.x >= entity.position.rect.x:
+                                    otherEntity1.direction = "right"
+                            if otherEntity2.enemyHealth.enemyHealth == 0:
+                                otherEntity1.position.rect.x = 1900
+                        if entity.type == "player":
+                            if entity.health.health == 0:
+                                otherEntity1.position.rect.x = 1900
 
         if potion_button.draw():
             potion = True
@@ -648,12 +703,16 @@ class CameraSystem1(System):
         if entity.type == "player":
             if entity.health.health == 0:
                 window.blit(utilities.lost_surface, (150, 150))
-        if entity.type == "enemy":
+        if entity.type == "enemy" and entity.name != "Enemy4":
             if entity.enemyHealth.enemyHealth == 0:
                 window.blit(utilities.won_surface, (190, 150))
                 for entity in globals.world.entities:
                     if entity.type == "player":
                         entity.health.health = entity.maxHealth.maxHealth
+        if entity.type == "enemy":
+            if entity.name == "Enemy4":
+                if entity.enemyHealth.enemyHealth == 0:
+                    window.blit(utilities.bossWon_surface, (190, 150))
 
 class Camera:
     def __init__(self, x, y, w, h):
@@ -723,7 +782,7 @@ class Damage:
 
 class Health:
     def __init__(self):
-        self.health = 500
+        self.health = 25
 
 class EnemyHealth:
     def __init__(self):
@@ -731,19 +790,23 @@ class EnemyHealth:
 
 class Enemy1Health:
     def __init__(self):
-        self.enemyHealth = 25
+        self.enemyHealth = 35
 
 class Enemy2Health:
     def __init__(self):
-        self.enemyHealth = 40
+        self.enemyHealth = 85
+
+class Enemy3Health:
+    def __init__(self):
+        self.enemyHealth = 80
 
 class Enemy4Health:
     def __init__(self):
-        self.enemyHealth = 60
+        self.enemyHealth = 100
 
 class MaxHealth:
     def __init__(self):
-        self.maxHealth = 500
+        self.maxHealth = 25
 
 class SwordLvl:
     def __init__(self):
@@ -754,10 +817,10 @@ class ShieldLvl:
         self.shieldLvl = 0
 
 class Input:
-    def __init__(self, left, right, e, space):
-        # self.up = up
+    def __init__(self, left, right, up, e, space):
         self.left = left
         self.right = right
+        self.up = up
         self.e = e
         self.space = space
 
@@ -765,9 +828,9 @@ class Intention:
     def __init__(self):
         self.moveLeft = False
         self.moveRight = False
+        self.jump = False
         self.ePressed = False
         self.spacePressed = False
-        # self.jump = False
 
 class Effect:
     def __init__(self, apply, timer, sound, end):
@@ -775,6 +838,9 @@ class Effect:
         self.timer = timer
         self.sound = sound
         self.end = end
+#
+def resetEntity(entity):
+    pass
 
 class Entity:
     def __init__(self):
@@ -784,10 +850,10 @@ class Entity:
         self.position = None
         self.animations = Animations()
         self.direction = 'left'
-        # self.speed = 0
-        # self.acceleration = 0
+        self.speed = 0
+        self.acceleration = 0
         self.intention = None
-        # self.on_ground = False
+        self.on_ground = False
         self.camera = None
         self.score = None
         self.potions = None
@@ -803,3 +869,4 @@ class Entity:
         self.swordLvl = None
         self.shieldLvl = None
         self.effect = None
+        self.reset = resetEntity

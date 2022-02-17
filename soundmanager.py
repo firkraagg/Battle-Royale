@@ -17,13 +17,10 @@ class SoundManager:
             "enemy_pain": pygame.mixer.Sound("sounds/enemy_pain.mp3"),
             "arrow_shot": pygame.mixer.Sound("sounds/arrow_shot.mp3"),
             "shield_block": pygame.mixer.Sound("sounds/shield_block.mp3"),
-            "poison": pygame.mixer.Sound("sounds/poison.mp3")
+            "poison": pygame.mixer.Sound("sounds/poison.mp3"),
+            "jump": pygame.mixer.Sound("sounds/jump.wav")
         }
-        self.music = {
 
-        }
     def playSound(self, soundName):
         self.sounds[soundName].set_volume(self.volume)
         self.sounds[soundName].play()
-    def playMusic(self):
-        pass

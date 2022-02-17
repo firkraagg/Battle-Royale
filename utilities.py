@@ -1,13 +1,11 @@
 import pygame
 import engine
-import math
 import globals
-import random
-from config import *
+from globals import *
 
 pygame.init()
-coin_im = pygame.image.load('images/Coins/coin.png')
 
+coin_im = pygame.image.load('images/Coins/coin.png')
 def makeCoin(x, y):
     entity = engine.Entity()
     entity.position = engine.Position(x,y,18,20)
@@ -30,7 +28,6 @@ npc1_image4 = pygame.image.load('images/Npc/npc3.png')
 npc1_image4 = pygame.transform.scale(npc1_image4, (135, 135))
 npc1_image5 = pygame.image.load('images/Npc/npc4.png')
 npc1_image5 = pygame.transform.scale(npc1_image5, (135, 135))
-
 def makeNpc(x, y):
     entity = engine.Entity()
     entity.position = engine.Position(x,y,80,250)
@@ -78,7 +75,7 @@ def makeSword1(x, y):
     return entity
 
 arrow_image = pygame.image.load("images/Enemy2/enemy_attack/arrow.png")
-arrow_image = pygame.transform.scale(arrow_image, (34, 12))
+arrow_image = pygame.transform.scale(arrow_image, (34, 10))
 def makeArrow(x, y):
     entity = engine.Entity()
     entity.x = x
@@ -96,7 +93,7 @@ def setPoison(entity):
         entity.health.health -= 0.1
 
 poisonArrow_image = pygame.image.load("images/Enemy3/enemy_attack/arrow.png")
-poisonArrow_image = pygame.transform.scale(poisonArrow_image, (34, 12))
+poisonArrow_image = pygame.transform.scale(poisonArrow_image, (34, 10))
 def makePoisonArrow(x, y):
     entity = engine.Entity()
     entity.x = x
@@ -111,7 +108,7 @@ def makePoisonArrow(x, y):
     return entity
 
 ball_image = pygame.image.load("images/Enemy4/enemy_shoot/ball.png")
-ball_image = pygame.transform.scale(ball_image, (12, 120))
+ball_image = pygame.transform.scale(ball_image, (12, 12))
 def makeBall(x, y):
     entity = engine.Entity()
     entity.x = x
@@ -124,10 +121,6 @@ def makeBall(x, y):
     entity.type = 'shootable'
     entity.type1 = 'ball'
     return entity
-
-def setPoison(entity):
-    if entity.health.health >= 1:
-        entity.health.health -= 0.1
 
 potion_image = pygame.image.load("images/ShopItems/potion.png")
 potion_image = pygame.transform.scale(potion_image, (30, 30))
@@ -179,14 +172,22 @@ def makeShield(x, y):
     entity.type1 = 'shield'
     return entity
 
-# def makeCondition():
-#     entity = engine.Entity()
-#     entity.position = engine.Position(x,y,18,20)
-#     entityAnimation = engine.Animation([coin_im])
-#     entity.animations.add('standing', entityAnimation)
-#     entity.effect = engine.Effect(setPoison, 100, "smash", None)
-#     # entity.type = 'collectable'
-#     return entity
+def resetPlayer(entity):
+    if entity.type == "player":
+        if entity.name == "Player1":
+            entity.score.score = 0
+            entity.direction = "left"
+            entity.health.health = 25
+            entity.maxHealth.maxHealth = 25
+            entity.damage.damage = 5
+            entity.potions.potions = 0
+            entity.poisonPotions.poisonPotions = 0
+            entity.shieldLvl.shieldLvl = 0
+            entity.swordLvl.swordLvl = 0
+            entity.position.rect.x = 450
+            entity.position.rect.y = 212
+            entity.effect = None
+            entity.enemyHealth.enemyHealth = 20
 
 player_stand0 = pygame.image.load('images/Player/player_standing/0.png')
 player_stand0 = pygame.transform.scale(player_stand0, (60, 150))
@@ -212,15 +213,30 @@ player_walk3 = pygame.transform.scale(player_walk3, (60, 150))
 player_walk4 = pygame.image.load('images/Player/player_walking/4.png')
 player_walk4 = pygame.transform.scale(player_walk4, (60, 150))
 
+player_jump0 = pygame.image.load('images/Player/player_jumping/0.png')
+player_jump0 = pygame.transform.scale(player_jump0, (60, 150))
+player_jump1 = pygame.image.load('images/Player/player_jumping/1.png')
+player_jump1 = pygame.transform.scale(player_jump1, (68, 150))
+player_jump2 = pygame.image.load('images/Player/player_jumping/2.png')
+player_jump2 = pygame.transform.scale(player_jump2, (75, 150))
+
 def makePlayer(x, y):
     entity = engine.Entity()
     entity.position = engine.Position(x,y, 60, 300)
-    entityStandingAnimation = engine.Animation([player_stand0, player_stand1, player_stand2, player_stand3, player_stand4, player_stand5])
-    entityWalkingAnimation = engine.Animation([player_walk0, player_walk1, player_walk2, player_walk3, player_walk4])
+    entityStandingAnimation = engine.Animation([player_stand0, player_stand1, player_stand2,
+                                                player_stand3, player_stand4, player_stand5])
+    entityWalkingAnimation = engine.Animation([player_walk0, player_walk1, player_walk2,
+                                               player_walk3, player_walk4])
+    entityJumpingAnimation = engine.deathAnimation([player_jump0, player_jump1,
+                                                    player_jump2, player_jump2, player_jump2])
     entity.animations.add('standing', entityStandingAnimation)
     entity.animations.add('walking', entityWalkingAnimation)
-    entity.current_fighter = 1
+    entity.animations.add('jumping', entityJumpingAnimation)
+    entity.intention = engine.Intention()
+    entity.acceleration = 0.05
     entity.type = 'player'
+    entity.name = "Player1"
+    entity.reset = resetPlayer
     return entity
 
 player1_stand0 = pygame.image.load("images/Player1/player_standing/img0.png")
@@ -236,6 +252,19 @@ player1_stand2 = pygame.transform.scale(player1_stand2, (102, 102))
 player1_stand1 = pygame.image.load("images/Player1/player_standing/img1.png")
 player1_stand1 = pygame.transform.scale(player1_stand1, (102, 102))
 
+player1_poisonedStand0 = pygame.image.load("images/Player1/player_poisonedStanding/img0.png")
+player1_poisonedStand0 = pygame.transform.scale(player1_poisonedStand0, (102, 102))
+player1_poisonedStand1 = pygame.image.load("images/Player1/player_poisonedStanding/img1.png")
+player1_poisonedStand1 = pygame.transform.scale(player1_poisonedStand1, (102, 102))
+player1_poisonedStand2 = pygame.image.load("images/Player1/player_poisonedStanding/img2.png")
+player1_poisonedStand2 = pygame.transform.scale(player1_poisonedStand2, (102, 102))
+player1_poisonedStand3 = pygame.image.load("images/Player1/player_poisonedStanding/img3.png")
+player1_poisonedStand3 = pygame.transform.scale(player1_poisonedStand3, (102, 102))
+player1_poisonedStand4 = pygame.image.load("images/Player1/player_poisonedStanding/img2.png")
+player1_poisonedStand4 = pygame.transform.scale(player1_poisonedStand4, (102, 102))
+player1_poisonedStand5 = pygame.image.load("images/Player1/player_poisonedStanding/img1.png")
+player1_poisonedStand5 = pygame.transform.scale(player1_poisonedStand5, (102, 102))
+
 player2_stand0 = pygame.image.load("images/Player2/player_standing/img0.png")
 player2_stand0 = pygame.transform.scale(player2_stand0, (102, 102))
 player2_stand1 = pygame.image.load("images/Player2/player_standing/img1.png")
@@ -245,6 +274,15 @@ player2_stand2 = pygame.transform.scale(player2_stand2, (102, 102))
 player2_stand3 = pygame.image.load("images/Player2/player_standing/img3.png")
 player2_stand3 = pygame.transform.scale(player2_stand3, (102, 102))
 
+player2_poisonedStand0 = pygame.image.load("images/Player2/player_poisoned_standing/img0.png")
+player2_poisonedStand0 = pygame.transform.scale(player2_poisonedStand0, (102, 102))
+player2_poisonedStand1 = pygame.image.load("images/Player2/player_poisoned_standing/img1.png")
+player2_poisonedStand1 = pygame.transform.scale(player2_poisonedStand1, (102, 102))
+player2_poisonedStand2 = pygame.image.load("images/Player2/player_poisoned_standing/img2.png")
+player2_poisonedStand2 = pygame.transform.scale(player2_poisonedStand2, (102, 102))
+player2_poisonedStand3 = pygame.image.load("images/Player2/player_poisoned_standing/img3.png")
+player2_poisonedStand3 = pygame.transform.scale(player2_poisonedStand3, (102, 102))
+
 player1_fight0 = pygame.image.load('images/Player1/player_fighting/img0.png')
 player1_fight0 = pygame.transform.scale(player1_fight0, (102, 102))
 player1_fight1 = pygame.image.load('images/Player1/player_fighting/img1.png')
@@ -252,12 +290,22 @@ player1_fight1 = pygame.transform.scale(player1_fight1, (102, 102))
 player1_fight2 = pygame.image.load('images/Player1/player_fighting/img2.png')
 player1_fight2 = pygame.transform.scale(player1_fight2, (102, 102))
 
+player1_poisonedFight0 = pygame.image.load('images/Player1/player_poisonedFighting/img0.png')
+player1_poisonedFight0 = pygame.transform.scale(player1_poisonedFight0, (102, 102))
+player1_poisonedFight2 = pygame.image.load('images/Player1/player_poisonedFighting/img2.png')
+player1_poisonedFight2 = pygame.transform.scale(player1_poisonedFight2, (102, 102))
+
 player2_fight0 = pygame.image.load('images/Player2/player_fighting/img0.png')
 player2_fight0 = pygame.transform.scale(player2_fight0, (102, 102))
 player2_fight1 = pygame.image.load('images/Player2/player_fighting/img1.png')
 player2_fight1 = pygame.transform.scale(player2_fight1, (102, 102))
 player2_fight2 = pygame.image.load('images/Player2/player_fighting/img2.png')
 player2_fight2 = pygame.transform.scale(player2_fight2, (102, 102))
+
+player2_poisonedFight0 = pygame.image.load('images/Player2/player_poisoned_fighting/img0.png')
+player2_poisonedFight0 = pygame.transform.scale(player2_poisonedFight0, (102, 102))
+player2_poisonedFight2 = pygame.image.load('images/Player2/player_poisoned_fighting/img2.png')
+player2_poisonedFight2 = pygame.transform.scale(player2_poisonedFight2, (102, 102))
 
 player2_block0 = pygame.image.load('images/Player2/player_block/img0.png')
 player2_block0 = pygame.transform.scale(player2_block0, (102, 102))
@@ -272,6 +320,19 @@ player2_block4 = pygame.transform.scale(player2_block4, (102, 102))
 player2_block5 = pygame.image.load('images/Player2/player_block/img5.png')
 player2_block5 = pygame.transform.scale(player2_block5, (102, 102))
 
+player2_poisonedBlock0 = pygame.image.load('images/Player2/player_poisoned_block/img0.png')
+player2_poisonedBlock0 = pygame.transform.scale(player2_poisonedBlock0, (102, 102))
+player2_poisonedBlock1 = pygame.image.load('images/Player2/player_poisoned_block/img1.png')
+player2_poisonedBlock1 = pygame.transform.scale(player2_poisonedBlock1, (102, 102))
+player2_poisonedBlock2 = pygame.image.load('images/Player2/player_poisoned_block/img2.png')
+player2_poisonedBlock2 = pygame.transform.scale(player2_poisonedBlock2, (102, 102))
+player2_poisonedBlock3 = pygame.image.load('images/Player2/player_poisoned_block/img3.png')
+player2_poisonedBlock3 = pygame.transform.scale(player2_poisonedBlock3, (102, 102))
+player2_poisonedBlock4 = pygame.image.load('images/Player2/player_poisoned_block/img4.png')
+player2_poisonedBlock4 = pygame.transform.scale(player2_poisonedBlock4, (102, 102))
+player2_poisonedBlock5 = pygame.image.load('images/Player2/player_poisoned_block/img5.png')
+player2_poisonedBlock5 = pygame.transform.scale(player2_poisonedBlock5, (102, 102))
+
 player1_walk0 = pygame.image.load('images/Player1/player_walking/img0.png')
 player1_walk0 = pygame.transform.scale(player1_walk0, (102, 102))
 player1_walk1 = pygame.image.load('images/Player1/player_walking/img1.png')
@@ -282,6 +343,17 @@ player1_walk3 = pygame.image.load('images/Player1/player_walking/img3.png')
 player1_walk3 = pygame.transform.scale(player1_walk3, (102, 102))
 player1_walk4 = pygame.image.load('images/Player1/player_walking/img4.png')
 player1_walk4 = pygame.transform.scale(player1_walk4, (102, 102))
+
+player1_poisonedWalk0 = pygame.image.load('images/Player1/player_poisonedWalking/img0.png')
+player1_poisonedWalk0 = pygame.transform.scale(player1_poisonedWalk0, (102, 102))
+player1_poisonedWalk1 = pygame.image.load('images/Player1/player_poisonedWalking/img1.png')
+player1_poisonedWalk1 = pygame.transform.scale(player1_poisonedWalk1, (102, 102))
+player1_poisonedWalk2 = pygame.image.load('images/Player1/player_poisonedWalking/img2.png')
+player1_poisonedWalk2 = pygame.transform.scale(player1_poisonedWalk2, (102, 102))
+player1_poisonedWalk3 = pygame.image.load('images/Player1/player_poisonedWalking/img3.png')
+player1_poisonedWalk3 = pygame.transform.scale(player1_poisonedWalk3, (102, 102))
+player1_poisonedWalk4 = pygame.image.load('images/Player1/player_poisonedWalking/img4.png')
+player1_poisonedWalk4 = pygame.transform.scale(player1_poisonedWalk4, (102, 102))
 
 player2_walk0 = pygame.image.load('images/Player2/player_walking/img0.png')
 player2_walk0 = pygame.transform.scale(player2_walk0, (102, 102))
@@ -294,10 +366,16 @@ player2_walk3 = pygame.transform.scale(player2_walk3, (102, 102))
 player2_walk4 = pygame.image.load('images/Player2/player_walking/img4.png')
 player2_walk4 = pygame.transform.scale(player2_walk4, (102, 102))
 
-player1_hurt0 = pygame.image.load("images/Player1/player_hurt/img0.png")
-player1_hurt0 = pygame.transform.scale(player1_hurt0, (102, 102))
-player1_hurt1 = pygame.image.load("images/Player1/player_hurt/img1.png")
-player1_hurt1 = pygame.transform.scale(player1_hurt1, (102, 102))
+player2_poisoned_walk0 = pygame.image.load('images/Player2/player_poisoned_walking/img0.png')
+player2_poisoned_walk0 = pygame.transform.scale(player2_poisoned_walk0, (102, 102))
+player2_poisoned_walk1 = pygame.image.load('images/Player2/player_poisoned_walking/img1.png')
+player2_poisoned_walk1 = pygame.transform.scale(player2_poisoned_walk1, (102, 102))
+player2_poisoned_walk2 = pygame.image.load('images/Player2/player_poisoned_walking/img2.png')
+player2_poisoned_walk2 = pygame.transform.scale(player2_poisoned_walk2, (102, 102))
+player2_poisoned_walk3 = pygame.image.load('images/Player2/player_poisoned_walking/img3.png')
+player2_poisoned_walk3 = pygame.transform.scale(player2_poisoned_walk3, (102, 102))
+player2_poisoned_walk4 = pygame.image.load('images/Player2/player_poisoned_walking/img4.png')
+player2_poisoned_walk4 = pygame.transform.scale(player2_poisoned_walk4, (102, 102))
 
 player1_death0 = pygame.image.load("images/Player1/player_death/0.png")
 player1_death0 = pygame.transform.scale(player1_death0, (102, 102))
@@ -311,36 +389,95 @@ player1_death4 = pygame.image.load("images/Player1/player_death/4.png")
 player1_death4 = pygame.transform.scale(player1_death4, (102, 102))
 player1_death5 = pygame.image.load("images/Player1/player_death/5.png")
 player1_death5 = pygame.transform.scale(player1_death5, (102, 102))
+
+player1_jump0 = pygame.image.load("images/Player1/player_jumping/img0.png")
+player1_jump0 = pygame.transform.scale(player1_jump0, (102, 102))
+player1_jump1 = pygame.image.load("images/Player1/player_jumping/img1.png")
+player1_jump1 = pygame.transform.scale(player1_jump1, (102, 102))
+player1_jump2 = pygame.image.load("images/Player1/player_jumping/img2.png")
+player1_jump2 = pygame.transform.scale(player1_jump2, (102, 102))
+
+player2_jump0 = pygame.image.load("images/Player2/player_jumping/img0.png")
+player2_jump0 = pygame.transform.scale(player2_jump0, (102, 102))
+player2_jump1 = pygame.image.load("images/Player2/player_jumping/img1.png")
+player2_jump1 = pygame.transform.scale(player2_jump1, (102, 102))
+player2_jump2 = pygame.image.load("images/Player2/player_jumping/img2.png")
+player2_jump2 = pygame.transform.scale(player2_jump2, (102, 102))
+
+player1_poisonedJump0 = pygame.image.load("images/Player1/player_poisonedJumping/img0.png")
+player1_poisonedJump0 = pygame.transform.scale(player1_poisonedJump0, (102, 102))
+player1_poisonedJump1 = pygame.image.load("images/Player1/player_poisonedJumping/img1.png")
+player1_poisonedJump1 = pygame.transform.scale(player1_poisonedJump1, (102, 102))
+player1_poisonedJump2 = pygame.image.load("images/Player1/player_poisonedJumping/img2.png")
+player1_poisonedJump2 = pygame.transform.scale(player1_poisonedJump2, (102, 102))
+
+player2_poisonedJump0 = pygame.image.load("images/Player2/player_poisoned_jumping/img0.png")
+player2_poisonedJump0 = pygame.transform.scale(player2_poisonedJump0, (102, 102))
+player2_poisonedJump1 = pygame.image.load("images/Player2/player_poisoned_jumping/img1.png")
+player2_poisonedJump1 = pygame.transform.scale(player2_poisonedJump1, (102, 102))
+player2_poisonedJump2 = pygame.image.load("images/Player2/player_poisoned_jumping/img2.png")
+player2_poisonedJump2 = pygame.transform.scale(player2_poisonedJump2, (102, 102))
 def makePlayer1(x, y):
     entity = engine.Entity()
-    entity.position = engine.Position(x,y, 45, 300)
-    entityStandingAnimation1 = engine.Animation([player1_stand0, player1_stand1, player1_stand2, player1_stand3, player1_stand2, player1_stand1])
-    entityWalkingAnimation1 = engine.Animation([player1_walk0, player1_walk1, player1_walk2, player1_walk3, player1_walk4])
-    entityFightingAnimation = engine.deathAnimation([player1_fight0, player1_fight1, player1_fight2])
-    entityHurtingAnimation = engine.Animation([player1_hurt0, player1_hurt1])
-    entityDeathAnimation = engine.deathAnimation([player1_death0, player1_death1, player1_death2, player1_death3, player1_death4, player1_death5])
+    entity.position = engine.Position(x,y, 45, 100)
+    entityStandingAnimation1 = engine.Animation([player1_stand0, player1_stand1,
+                                                 player1_stand2, player1_stand3, player1_stand2, player1_stand1])
+    entityPoisonedStandingAnimation1 = engine.Animation(
+        [player1_poisonedStand0, player1_poisonedStand1, player1_poisonedStand2,
+         player1_poisonedStand3, player1_poisonedStand4, player1_poisonedStand5])
+    entityWalkingAnimation1 = engine.Animation([player1_walk0, player1_walk1,
+                                                player1_walk2, player1_walk3, player1_walk4])
+    entityPoisonedWalkingAnimation1 = engine.Animation(
+        [player1_poisonedWalk0, player1_poisonedWalk1, player1_poisonedWalk2, player1_poisonedWalk3, player1_poisonedWalk4])
+    entityFightingAnimation = engine.deathAnimation([player1_fight0, player1_fight2])
+    entityPoisonedFightingAnimation = engine.deathAnimation([player1_poisonedFight0, player1_poisonedFight2])
+    entityJumpingAnimation = engine.deathAnimation([player1_jump0, player1_jump1, player1_jump2, player1_jump2, player1_jump2])
+    entityPoisonedJumpingAnimation = engine.deathAnimation([player1_poisonedJump0, player1_poisonedJump1,
+                                                            player1_poisonedJump2, player1_poisonedJump2, player1_poisonedJump2])
+    entityDeathAnimation = engine.deathAnimation([player1_death0, player1_death1, player1_death2,
+                                                  player1_death3, player1_death4, player1_death5])
     entity.animations.add('standing1', entityStandingAnimation1)
     entity.animations.add('standing', entityStandingAnimation1)
+    entity.animations.add("poisonedStanding1", entityPoisonedStandingAnimation1)
     entity.animations.add('walking1', entityWalkingAnimation1)
+    entity.animations.add('poisonedWalking1', entityPoisonedWalkingAnimation1)
     entity.animations.add('fighting', entityFightingAnimation)
-    entity.animations.add('hurt1', entityHurtingAnimation)
+    entity.animations.add('poisonedFighting1', entityPoisonedFightingAnimation)
+    entity.animations.add('jumping', entityJumpingAnimation)
+    entity.animations.add('poisonedJumping', entityPoisonedJumpingAnimation)
     entity.animations.add('death', entityDeathAnimation)
 
     entityStandingAnimation2 = engine.Animation([player2_stand0, player2_stand1, player2_stand2, player2_stand3])
+    entityPoisonedStandingAnimation2 = engine.Animation([player2_poisonedStand0, player2_poisonedStand1, player2_poisonedStand2, player2_poisonedStand3])
     entityWalkingAnimation2 = engine.Animation([player2_walk0, player2_walk1, player2_walk2, player2_walk3, player2_walk4])
-    entityFightingAnimation2 = engine.deathAnimation([player2_fight0, player2_fight1, player2_fight2])
+    entityPoisonedWalkingAnimation2 = engine.Animation([player2_poisoned_walk0, player2_poisoned_walk1, player2_poisoned_walk2, player2_poisoned_walk3,
+    player2_poisoned_walk4])
+    entityFightingAnimation2 = engine.deathAnimation([player2_fight0, player2_fight2])
+    entityPoisonedFightingAnimation2 = engine.deathAnimation([player2_poisonedFight0, player2_poisonedFight2])
     entityBlockAnimation = engine.Animation([player2_block0, player2_block1, player2_block2, player2_block3, player2_block4, player2_block5])
-    # entityDeathAnimation2 = engine.deathAnimation(
-    #     [player1_death0, player1_death1, player1_death2, player1_death3, player1_death4, player1_death5])
+    entityJumpingAnimation1 = engine.deathAnimation([player2_jump0, player2_jump1, player2_jump2, player2_jump2, player2_jump2])
+    entityPoisonedJumpingAnimation1 = engine.deathAnimation(
+        [player2_poisonedJump0, player2_poisonedJump1, player2_poisonedJump2, player2_poisonedJump2, player2_poisonedJump2])
+    entityPoisonedBlockAnimation = engine.Animation(
+        [player2_poisonedBlock0, player2_poisonedBlock1, player2_poisonedBlock2, player2_poisonedBlock3, player2_poisonedBlock4, player2_poisonedBlock5])
+
     entity.animations.add('standing2', entityStandingAnimation2)
     entity.animations.add('standing3', entityStandingAnimation2)
+    entity.animations.add('poisonedStanding2', entityPoisonedStandingAnimation2)
     entity.animations.add('walking2', entityWalkingAnimation2)
+    entity.animations.add('poisonedWalking2', entityPoisonedWalkingAnimation2)
     entity.animations.add('fighting2', entityFightingAnimation2)
+    entity.animations.add('poisonedFighting2', entityPoisonedFightingAnimation2)
     entity.animations.add("block1", entityBlockAnimation)
-    # entity.animations.add('death', entityDeathAnimation)
+    entity.animations.add("jumping1", entityJumpingAnimation1)
+    entity.animations.add("poisonedJumping1", entityPoisonedJumpingAnimation1)
+    entity.animations.add("poisonedBlock1", entityPoisonedBlockAnimation)
     entity.damage = 5
     entity.sword_lvl = 0
+    entity.intention = engine.Intention()
+    entity.acceleration = 0.2
     entity.type = 'player'
+    entity.name = "Player2"
     return entity
 
 enemy_stand0 = pygame.image.load('images/Enemy/enemy_standing/0.png')
@@ -455,7 +592,7 @@ def makeEnemy1(x, y, damage, potions):
     entity.position = engine.Position(entity.x, entity.y, 80, 300)
     entity.rect = pygame.rect.Rect(480, 340, 150, 150)
     entityStandingAnimation = engine.Animation([enemy1_stand0])
-    entityAttackAnimation = engine.Animation([enemy1_attack0, enemy1_attack1, enemy1_attack2])
+    entityAttackAnimation = engine.Animation([enemy1_attack0, enemy1_attack2])
     entityBlockAnimation = engine.Animation([enemy1_block0])
     entityWalkingAnimation = engine.Animation([enemy1_walking0, enemy1_walking1, enemy1_walking2, enemy1_walking3, enemy1_walking4])
     entityDeathAnimation = engine.deathAnimation([enemy1_death0, enemy1_death1, enemy1_death2, enemy1_death3, enemy1_death4, enemy1_death5])
@@ -468,7 +605,6 @@ def makeEnemy1(x, y, damage, potions):
     entity.potions = potions
     entity.type = 'enemy'
     entity.name = "Enemy1"
-    # entity.action0 = entity.animations.add('hurt', entityHurtAnimation)
     return entity
 
 enemy2_stand0 = pygame.image.load("images/Enemy2/enemy_standing/0.png")
@@ -534,8 +670,6 @@ def makeEnemy2(x, y, damage, potions):
 enemy3_stand0 = pygame.image.load("images/Enemy3/enemy_standing/0.png")
 enemy3_stand0 = pygame.transform.scale(enemy3_stand0, (81, 180))
 
-# enemy3_walking0 = pygame.image.load("images/Enemy3/enemy_walking/0.png")
-# enemy3_walking0 = pygame.transform.scale(enemy3_walking0, (81, 180))
 enemy3_walking1 = pygame.image.load("images/Enemy3/enemy_walking/1.png")
 enemy3_walking1 = pygame.transform.scale(enemy3_walking1, (81, 180))
 enemy3_walking2 = pygame.image.load("images/Enemy3/enemy_walking/2.png")
@@ -671,7 +805,6 @@ def makeDoor(window):
     p1 = pygame.Rect(656, 250, 10, 100)
     pygame.draw.rect(window, BLACK, p1)
 
-
 def draw_text(window, text, size, x, y):
     font = pygame.font.SysFont('franklingothicmedium', size)
     text = font.render(text, True, WHITE)
@@ -679,12 +812,11 @@ def draw_text(window, text, size, x, y):
     text_rectangle.center = (x, y)
     window.blit(text, text_rectangle)
 
-def draw_coinText(window,text, x, y):
+def draw_coinText(window, text, x, y):
     font = pygame.font.SysFont('franklingothicmedium', 25)
     text = font.render(text, True, WHITE)
     text_rectangle = text.get_rect()
     text_rectangle.topleft = (x, y)
-    # window = pygame.display.set_mode((720, 480))
     window.blit(text, text_rectangle)
 
 
@@ -700,17 +832,6 @@ def intro_text(window, text, size, x, y):
     text_rectangle = text.get_rect()
     text_rectangle.center = (x, y)
     window.blit(text, text_rectangle)
-    # rect = text.get_rect(topleft=(x, y))
-    # while rect.y > -GAME_HEIGHT:
-    #     for event in pygame.event.get():
-    #         if event.type == pygame.QUIT:
-    #             pygame.quit()
-    #             sys.exit()
-            # window.fill(background)
-            # window.blit(image, rect)
-            # pygame.time.wait(25)
-            # rect.y -= 1
-            # pygame.display.update()
 
     text1 = "It is year 264 before Christ, Rome"
     text2 = "You are an ordinary craftsman, but your hobby has always"
@@ -720,7 +841,6 @@ def intro_text(window, text, size, x, y):
     text6 = "You woke up in the cell in the morning and you see a "
     text7 = "mysterious guy. "
 
-
     dialogue_surface1 = font.render(text1, False, '#FFFFFF')
     dialogue_surface2 = font.render(text2, False, '#FFFFFF')
     dialogue_surface3 = font.render(text3, False, '#FFFFFF')
@@ -728,7 +848,6 @@ def intro_text(window, text, size, x, y):
     dialogue_surface5 = font.render(text5, False, '#FFFFFF')
     dialogue_surface6 = font.render(text6, False, '#FFFFFF')
     dialogue_surface7 = font.render(text7, False, '#FFFFFF')
-
 
     window.blit(dialogue_surface1, (200, 10))
     window.blit(dialogue_surface2, (100, 120))
@@ -738,24 +857,11 @@ def intro_text(window, text, size, x, y):
     window.blit(dialogue_surface6, (115, 290))
     window.blit(dialogue_surface7, (270, 320))
 
-
-
-
 def npcName(window, text, color, x, y):
-    # p_background = pygame.image.load('images/Prison/prison.png')
-    # p_background = pygame.transform.scale(p_background, (GAME_WIDTH, GAME_HEIGHT))
-    # window.blit(p_background, (0, 0))
-    # coin_count_image = pygame.image.load('images/Coins/coin.png')
-    # coin_count_image = pygame.transform.scale(coin_count_image, (25, 30))
     gui_font = pygame.font.SysFont('franklingothicmedium', 24)
     text = text
-    # color = color
     name_surface = gui_font.render(text, False, color)
     window.blit(name_surface, (x, y))
-    # window.blit(coin_count_image, (50, 50))
-    # coin_number = 0
-    # draw_coinText(window, str(coin_number), 80, 52)
-
 
 gui_font = pygame.font.SysFont('franklingothicmedium', 24)
 font0 = pygame.font.SysFont('franklingothicmedium', 20)
@@ -768,7 +874,7 @@ door_text = "press 1 to go to hall"
 text0 = "press E to talk"
 text1 = "Hello, I am Spiculus. They brought you here last night. I don't know "
 text2 = "what crime you committed, but you got into the gladiatorial arena."
-text3 = "You have to defeat three chosen gladiators and then you will be free. "
+text3 = "You have to defeat five chosen gladiators and then you will be free."
 
 
 dialogue_surface0 = font.render(text0, False, '#FFFFFF')
@@ -776,11 +882,6 @@ door_surface = font.render(door_text, False, '#FFFFFF')
 dialogue_surface1 = gui_font.render(text1, False, '#FFFFFF')
 dialogue_surface2 = gui_font.render(text2, False, '#FFFFFF')
 dialogue_surface3 = gui_font.render(text3, False, '#FFFFFF')
-
-turn1_text = "Your Turn"
-turn2_text = "Enemy's Turn"
-turn_surface1 = gui_font.render(turn1_text, False, '#FFFFFF')
-turn_surface2 = gui_font.render(turn2_text, False, '#FFFFFF')
 
 hall_text = "Press B to go back to the Hall"
 
@@ -816,18 +917,31 @@ boss_hintSurface = font0.render(boss_hintText, False, '#FFFFFF')
 useShield_hintText = "Hint: You can use shield by holding SPACE"
 useShield_hintSurface = font0.render(useShield_hintText, False, '#FFFFFF')
 poisonArrow_hintText1 = "Hint: Next enemy is using poison for his arrows so some attacks "
-poisonArrow_hintText2 = "can poison you. Poison do damage over time. Avoid it with using"
-poisonArrow_hintText3 = "shield or buy anti-poison potion."
+poisonArrow_hintText2 = "can poison you. Poison do damage over time. Avoid it by jumping"
+poisonArrow_hintText3 = "or buy anti-poison potion. Your shield might not help you."
 poisonArrow_hintSurface1 = font0.render(poisonArrow_hintText1, False, '#FFFFFF')
 poisonArrow_hintSurface2 = font0.render(poisonArrow_hintText2, False, '#FFFFFF')
 poisonArrow_hintSurface3 = font0.render(poisonArrow_hintText3, False, '#FFFFFF')
 
-cursor_image = pygame.image.load("images/ShopItems/sword.png")
+arena_bg = pygame.image.load("images/Backgrounds/arena_bg.png")
+arena_bg = pygame.transform.scale(arena_bg, (GAME_WIDTH, GAME_HEIGHT))
+
+arena_intro_text1 = "Gladiator games culminate today."
+arena_intro_text2 = "The last gladiator who survives will receive"
+arena_intro_text3 = "a wooden sword, which is a symbol of freedom!"
+arena_intro_surface1 = gui_font.render(arena_intro_text1, False, '#FFFFFF')
+arena_intro_surface2 = gui_font.render(arena_intro_text2, False, '#FFFFFF')
+arena_intro_surface3 = gui_font.render(arena_intro_text3, False, '#FFFFFF')
+skip_text = 'Press space to skip'
+skip_surface = font0.render(skip_text, False, '#FF0000')
 
 won_text = "You Won! Press 4 to go to the Hall"
 won_surface = gui_font.render(won_text, False, '#FFFFFF')
-gameWon_text = "You won and you got your freedom! "
+bossWon_text = "You won! Now you are free!(PRESS 4)"
+bossWon_surface = gui_font.render(bossWon_text, False, '#FFFFFF')
+gameWon_text = "You won and you got your freedom!"
 gameWon_surface = gui_font.render(gameWon_text, False, '#FFFFFF')
+mainMenu_text = "press ESC to go back to the main menu"
+mainMenu_surface = font0.render(mainMenu_text, False, '#FF0000')
 lost_text = "You Lost! Press ESC to go to the Main Menu"
 lost_surface = gui_font.render(lost_text, False, '#FFFFFF')
-

@@ -15,10 +15,6 @@ class Keyboard:
         if self.currentKeyStates is None or self.previousKeyStates is None:
             return False
         return self.currentKeyStates[keyCode] == True and self.previousKeyStates[keyCode] == False
-    def isKeyReleased(self, keyCode):
-        if self.currentKeyStates is None or self.previousKeyStates is None:
-            return False
-        return self.currentKeyStates[keyCode] == False and self.previousKeyStates[keyCode] == True
 
 class InputStream:
     def __init__(self):

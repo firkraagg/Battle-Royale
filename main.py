@@ -4,10 +4,9 @@ import utilities
 import level
 import scene
 import globals
-import button
 import inputstream
 import soundmanager
-from config import *
+from globals import *
 
 pygame.init()
 window = pygame.display.set_mode((720, 480))
@@ -30,7 +29,6 @@ coin_image = pygame.image.load('images/Coins/coin.png')
 coin = utilities.makeCoin(90, 342)
 coin1 = utilities.makeCoin(615, 342)
 coin2 = utilities.makeCoin(200, 342)
-entities.append(coin)
 
 npc1 = utilities.makeNpc(350, 226)
 shopkeeper = utilities.makeShopKeeper(250,242)
@@ -151,12 +149,10 @@ globals.levels[1] = level.Level(
     ],
     entities=[
         npc1, player, coin
-    ],
-    doors=[
-        door1
-    ]
 
+    ],
 )
+
 globals.levels[2] = level.Level(
     platforms=[
         pygame.Rect(52, 283, 610, 5),
@@ -167,9 +163,6 @@ globals.levels[2] = level.Level(
     ],
     entities=[
         coin1, player,
-    ],
-    doors=[
-        door1
     ]
 )
 
@@ -183,9 +176,6 @@ globals.levels[3] = level.Level(
     ],
     entities=[
         coin2, shopkeeper, sword, potion, armor, player
-    ],
-    doors=[
-        pygame.Rect(330, 405, 5, 50),
     ]
 )
 
@@ -199,11 +189,7 @@ globals.levels[4] = level.Level(
     ],
     entities=[
         enemy, player1
-    ],
-    doors=[
-        pygame.Rect(330, 405, 5, 50)
     ]
-
 )
 
 globals.levels[5] = level.Level(
@@ -216,9 +202,6 @@ globals.levels[5] = level.Level(
     ],
     entities=[
         player
-    ],
-    doors=[
-        pygame.Rect(330, 405, 5, 50),
     ]
 )
 
@@ -232,9 +215,6 @@ globals.levels[6] = level.Level(
     ],
     entities=[
         coin2, shopkeeper, sword1, potion, armor, player
-    ],
-    doors=[
-        pygame.Rect(330, 405, 5, 50),
     ]
 )
 
@@ -248,9 +228,6 @@ globals.levels[7] = level.Level(
     ],
     entities=[
         enemy1, player1
-    ],
-    doors=[
-        pygame.Rect(330, 405, 5, 50),
     ]
 )
 
@@ -264,9 +241,6 @@ globals.levels[8] = level.Level(
     ],
     entities=[
         player
-    ],
-    doors=[
-        pygame.Rect(330, 405, 5, 50),
     ]
 )
 
@@ -280,9 +254,6 @@ globals.levels[9] = level.Level(
     ],
     entities=[
         coin2, shopkeeper, shield, potion, armor, player
-    ],
-    doors=[
-        pygame.Rect(330, 405, 5, 50),
     ]
 )
 
@@ -296,9 +267,6 @@ globals.levels[10] = level.Level(
     ],
     entities=[
         enemy2, player1, arrow
-    ],
-    doors=[
-        pygame.Rect(330, 405, 5, 50),
     ]
 )
 
@@ -312,9 +280,6 @@ globals.levels[11] = level.Level(
     ],
     entities=[
         player
-    ],
-    doors=[
-        pygame.Rect(330, 405, 5, 50),
     ]
 )
 
@@ -328,9 +293,6 @@ globals.levels[12] = level.Level(
     ],
     entities=[
         coin2, shopkeeper, shield, potion, armor, poisonPotion, player
-    ],
-    doors=[
-        pygame.Rect(330, 405, 5, 50),
     ]
 )
 
@@ -345,9 +307,6 @@ globals.levels[13] = level.Level(
     ],
     entities=[
         enemy3, player1, poisonArrow
-    ],
-    doors=[
-        pygame.Rect(330, 405, 5, 50),
     ]
 )
 
@@ -361,9 +320,6 @@ globals.levels[14] = level.Level(
     ],
     entities=[
         player
-    ],
-    doors=[
-        pygame.Rect(330, 405, 5, 50),
     ]
 )
 
@@ -377,9 +333,6 @@ globals.levels[15] = level.Level(
     ],
     entities=[
         coin2, shopkeeper, sword, potion, armor, poisonPotion, player
-    ],
-    doors=[
-        pygame.Rect(330, 405, 5, 50),
     ]
 )
 
@@ -393,9 +346,6 @@ globals.levels[16] = level.Level(
     ],
     entities=[
         enemy4, player1, ball
-    ],
-    doors=[
-        pygame.Rect(330, 405, 5, 50),
     ]
 )
 globals.world = globals.levels[1]
@@ -409,6 +359,7 @@ cameraSys = engine.CameraSystem()
 cameraSys1 = engine.CameraSystem1()
 
 entity = engine.Entity()
+
 running = True
 
 while running:
@@ -418,6 +369,7 @@ while running:
     sceneManager.update(inputStream)
     sceneManager.draw(window)
 
+
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
@@ -425,12 +377,14 @@ while running:
     new_player_x = player.position.rect.x
     new_enemy_x = enemy.position.rect.x
 
+
     if game_state == 'playing':
 
         for entity in globals.world.entities:
             entity.animations.animationList[entity.state].update()
 
         window.blit(p_background, (0, 0))
+        window.blit(utilities.door_surface, (60, 225))
 
         new_player_rect = pygame.Rect(int(new_player_x), 400, 72, 72)
         x_collision = False
@@ -499,7 +453,19 @@ while running:
                             window.blit(utilities.dialogue_surface1, (0, 380)),
                             window.blit(utilities.dialogue_surface2, (0, 410)),
                             window.blit(utilities.dialogue_surface3, (0, 440))
+        # save_button_image = pygame.image.load("images/save_button.png")
+        # save_button = menu.Button1(window, 1000, 100, save_button_image, 40, 40)
+        # save_button.draw()
+        # load_button_image = pygame.image.load("images/load_button.png")
+        # load_button = menu.Button1(window, 700, 100, load_button_image, 40, 40)
+        # load_button.draw()
+        # if save_button.clicked:
+        #     level.save(entity)
+        #     print("saved")
+        # if load_button.clicked:
+        #     level.load(entity)
+        #     print("loading")
 
-        update()
+    update()
 
 pygame.quit()
