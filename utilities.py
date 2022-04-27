@@ -172,23 +172,6 @@ def makeShield(x, y):
     entity.type1 = 'shield'
     return entity
 
-def resetPlayer(entity):
-    if entity.type == "player":
-        if entity.name == "Player1":
-            entity.score.score = 0
-            entity.direction = "left"
-            entity.health.health = 25
-            entity.maxHealth.maxHealth = 25
-            entity.damage.damage = 5
-            entity.potions.potions = 0
-            entity.poisonPotions.poisonPotions = 0
-            entity.shieldLvl.shieldLvl = 0
-            entity.swordLvl.swordLvl = 0
-            entity.position.rect.x = 450
-            entity.position.rect.y = 212
-            entity.effect = None
-            entity.enemyHealth.enemyHealth = 20
-
 player_stand0 = pygame.image.load('images/Player/player_standing/0.png')
 player_stand0 = pygame.transform.scale(player_stand0, (60, 150))
 player_stand1 = pygame.image.load('images/Player/player_standing/1.png')
@@ -236,7 +219,6 @@ def makePlayer(x, y):
     entity.acceleration = 0.05
     entity.type = 'player'
     entity.name = "Player1"
-    entity.reset = resetPlayer
     return entity
 
 player1_stand0 = pygame.image.load("images/Player1/player_standing/img0.png")
@@ -906,6 +888,10 @@ acost_surface = font.render(acost_text, False, '#FFFFFF')
 scost_text = "COST: 20"
 scost_surface = font.render(scost_text, False, '#FFFFFF')
 
+load_hintText1 = "Hint: before every arena save your progress by clicking on Save the Game button"
+load_hintText2 = "so you can load your game through the arena and you do not lose your progress."
+load_hintSurface1 = font0.render(load_hintText1, False, '#FFFFFF')
+load_hintSurface2 = font0.render(load_hintText2, False, '#FFFFFF')
 shop_hintText = "Hint: Press E to buy item"
 shop_hintSurface = font0.render(shop_hintText, False, '#FFFFFF')
 shield_hintText = "Hint: You cannot damage enemies with shield"
@@ -926,6 +912,11 @@ poisonArrow_hintSurface3 = font0.render(poisonArrow_hintText3, False, '#FFFFFF')
 arena_bg = pygame.image.load("images/Backgrounds/arena_bg.png")
 arena_bg = pygame.transform.scale(arena_bg, (GAME_WIDTH, GAME_HEIGHT))
 
+hit_text = "Hit!"
+hit_surface = font.render(hit_text, False, '#FF0000')
+miss_text = "Miss!"
+miss_surface = font.render(miss_text, False, '#FF0000')
+
 arena_intro_text1 = "Gladiator games culminate today."
 arena_intro_text2 = "The last gladiator who survives will receive"
 arena_intro_text3 = "a wooden sword, which is a symbol of freedom!"
@@ -945,3 +936,9 @@ mainMenu_text = "press ESC to go back to the main menu"
 mainMenu_surface = font0.render(mainMenu_text, False, '#FF0000')
 lost_text = "You Lost! Press ESC to go to the Main Menu"
 lost_surface = gui_font.render(lost_text, False, '#FFFFFF')
+
+load_text = "You can load your game by clicking on load button."
+load_surface = gui_font.render(load_text, False, '#FFFFFF')
+
+saved_text = "saved"
+saved_surface = font.render(saved_text, False, '#FF0000')

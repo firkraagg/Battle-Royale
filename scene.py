@@ -3,8 +3,8 @@ import engine
 import button
 import globals
 import utilities
-import level
 from globals import *
+import level
 
 clock = pygame.time.Clock()
 
@@ -23,6 +23,8 @@ class Scene:
         pass
 
 class MainMenuScene(Scene):
+    def __init__(self):
+        globals.soundManager.playMusic("menu_music")
     def draw(self, sm, window):
         button1 = button.Button('Start new game', 160, 50, (270, 170), 6)
         button2 = button.Button('Quit', 110, 30, (295, 250), 6)
@@ -40,8 +42,6 @@ class IntroScene(Scene):
         if inputStream.keyboard.isKeyPressed(pygame.K_SPACE):
             globals.world = globals.levels[1]
             sm.push(FadeTransitionScene(self, PrisonScene()))
-            for entity in globals.world.entities:
-                entity.reset(entity)
         if inputStream.keyboard.isKeyPressed(pygame.K_ESCAPE):
             sm.pop()
             sm.push(FadeTransitionScene(self, MainMenuScene()))
@@ -57,6 +57,7 @@ class PrisonScene(Scene):
         self.collectionSystem = engine.CollectionSystem()
         self.physicsSystem = engine.PhysicsSystem()
         self.inputSystem = engine.InputSystem()
+        globals.soundManager.playMusic("prison_music")
     def input(self, sm, inputStream):
         if inputStream.keyboard.isKeyPressed(pygame.K_ESCAPE):
             sm.pop()
@@ -80,6 +81,7 @@ class HallScene(Scene):
         self.collectionSystem = engine.CollectionSystem()
         self.physicsSystem = engine.PhysicsSystem()
         self.inputSystem = engine.InputSystem()
+        globals.soundManager.playMusic("game_music")
     def input(self, sm, inputStream):
         if inputStream.keyboard.isKeyPressed(pygame.K_ESCAPE):
             sm.pop()
@@ -106,6 +108,7 @@ class HallScene(Scene):
         hall_bg = pygame.image.load("images/Backgrounds/hall_bg.png")
         hall_bg = pygame.transform.scale(hall_bg, (GAME_WIDTH, GAME_HEIGHT))
         window.blit(hall_bg, (0, 0))
+        level.save_button.draw()
         globals.world = globals.levels[2]
         self.cameraSystem.update(window)
         font = pygame.font.SysFont('franklingothicmedium', 15)
@@ -118,6 +121,8 @@ class HallScene(Scene):
         window.blit(shop_surface, (500, 225))
         window.blit(cell_surface, (60, 225))
         window.blit(arena_surface, (285, 200))
+        window.blit(utilities.load_hintSurface1, (10, 420))
+        window.blit(utilities.load_hintSurface2, (10, 440))
 
 class ShopScene(Scene):
     def __init__(self):
@@ -183,6 +188,7 @@ class ArenaScene(Scene):
         self.cameraSystem1 = engine.CameraSystem1()
         self.physicsSystem = engine.PhysicsSystem()
         self.conditionSystem = engine.ConditionSystem()
+        globals.soundManager.playMusic("arena_music")
     def input(self, sm, inputStream):
         if inputStream.keyboard.isKeyPressed(pygame.K_ESCAPE):
             sm.pop()
@@ -193,13 +199,25 @@ class ArenaScene(Scene):
                     globals.soundManager.playSound("arena_doors")
                     sm.pop()
                     sm.push(FadeTransitionScene(self, HallScene1()))
+        if level.yes == True:
+            sm.pop()
+            # globals.world = globals.levels[2]
+            sm.push(FadeTransitionScene(self, HallScene()))
+            globals.world = globals.levels[2]
 
     def update(self, sm, inputStream):
         self.inputSystem.update(inputStream=inputStream)
         self.physicsSystem.update()
         self.conditionSystem.update()
     def draw(self, sm, window):
+        # load_image = pygame.image.load("images/load_image.png")
+        # load_image = pygame.transform.scale(load_image, (120, 60))
         window.blit(utilities.arena_bg, (0, 0))
+        # load_button = button.Button1(window, 430, 430, load_image, 40, 40)
+        for otherEntity in globals.world.entities:
+            if otherEntity.type == "enemy":
+                if otherEntity.enemyHealth.enemyHealth != 0:
+                    level.load_button.draw()
         globals.world = globals.levels[4]
         self.cameraSystem1.update(window)
 
@@ -209,6 +227,7 @@ class HallScene1(Scene):
         self.collectionSystem = engine.CollectionSystem()
         self.physicsSystem = engine.PhysicsSystem()
         self.inputSystem = engine.InputSystem()
+        globals.soundManager.playMusic("game_music")
     def input(self, sm, inputStream):
         if inputStream.keyboard.isKeyPressed(pygame.K_ESCAPE):
             sm.pop()
@@ -231,6 +250,7 @@ class HallScene1(Scene):
         hall_bg = pygame.image.load("images/Backgrounds/hall_bg.png")
         hall_bg = pygame.transform.scale(hall_bg, (GAME_WIDTH, GAME_HEIGHT))
         window.blit(hall_bg, (0, 0))
+        level.save_button.draw()
         window.blit(utilities.shield_hintSurface, (20, 450))
         globals.world = globals.levels[5]
         self.cameraSystem.update(window)
@@ -287,6 +307,7 @@ class ArenaScene1(Scene):
         self.inputSystem = engine.InputSystem()
         self.cameraSystem1 = engine.CameraSystem1()
         self.physicsSystem = engine.PhysicsSystem()
+        globals.soundManager.playMusic("arena_music")
     def input(self, sm, inputStream):
         if inputStream.keyboard.isKeyPressed(pygame.K_ESCAPE):
             sm.pop()
@@ -305,7 +326,12 @@ class ArenaScene1(Scene):
     def draw(self, sm, window):
         window.blit(utilities.arena_bg, (0, 0))
         globals.world = globals.levels[7]
+        for otherEntity in globals.world.entities:
+            if otherEntity.type == "enemy":
+                if otherEntity.enemyHealth.enemyHealth != 0:
+                    level.load_button.draw()
         self.cameraSystem1.update(window)
+
 
 class HallScene2(Scene):
     def __init__(self):
@@ -313,6 +339,7 @@ class HallScene2(Scene):
         self.collectionSystem = engine.CollectionSystem()
         self.physicsSystem = engine.PhysicsSystem()
         self.inputSystem = engine.InputSystem()
+        globals.soundManager.playMusic("game_music")
     def input(self, sm, inputStream):
         if inputStream.keyboard.isKeyPressed(pygame.K_ESCAPE):
             sm.pop()
@@ -335,6 +362,7 @@ class HallScene2(Scene):
         hall_bg = pygame.image.load("images/Backgrounds/hall_bg.png")
         hall_bg = pygame.transform.scale(hall_bg, (GAME_WIDTH, GAME_HEIGHT))
         window.blit(hall_bg, (0, 0))
+        level.save_button.draw()
         window.blit(utilities.bow_hintSurface, (20, 450))
         window.blit(utilities.useShield_hintSurface, (20, 430))
         globals.world = globals.levels[8]
@@ -391,6 +419,7 @@ class ArenaScene2(Scene):
         self.inputSystem = engine.InputSystem()
         self.cameraSystem1 = engine.CameraSystem1()
         self.physicsSystem = engine.PhysicsSystem()
+        globals.soundManager.playMusic("arena_music")
     def input(self, sm, inputStream):
         if inputStream.keyboard.isKeyPressed(pygame.K_ESCAPE):
             sm.pop()
@@ -409,6 +438,10 @@ class ArenaScene2(Scene):
     def draw(self, sm, window):
         window.blit(utilities.arena_bg, (0, 0))
         globals.world = globals.levels[10]
+        for otherEntity in globals.world.entities:
+            if otherEntity.type == "enemy":
+                if otherEntity.enemyHealth.enemyHealth != 0:
+                    level.load_button.draw()
         self.cameraSystem1.update(window)
 
 class HallScene3(Scene):
@@ -417,6 +450,7 @@ class HallScene3(Scene):
         self.collectionSystem = engine.CollectionSystem()
         self.physicsSystem = engine.PhysicsSystem()
         self.inputSystem = engine.InputSystem()
+        globals.soundManager.playMusic("game_music")
     def input(self, sm, inputStream):
         if inputStream.keyboard.isKeyPressed(pygame.K_ESCAPE):
             sm.pop()
@@ -439,6 +473,7 @@ class HallScene3(Scene):
         hall_bg = pygame.image.load("images/Backgrounds/hall_bg.png")
         hall_bg = pygame.transform.scale(hall_bg, (GAME_WIDTH, GAME_HEIGHT))
         window.blit(hall_bg, (0, 0))
+        level.save_button.draw()
         window.blit(utilities.poisonArrow_hintSurface1, (20, 410))
         window.blit(utilities.poisonArrow_hintSurface2, (20, 430))
         window.blit(utilities.poisonArrow_hintSurface3, (20, 450))
@@ -499,6 +534,7 @@ class ArenaScene3(Scene):
         self.cameraSystem1 = engine.CameraSystem1()
         self.physicsSystem = engine.PhysicsSystem()
         self.conditionSystem = engine.ConditionSystem()
+        globals.soundManager.playMusic("arena_music")
     def input(self, sm, inputStream):
         if inputStream.keyboard.isKeyPressed(pygame.K_ESCAPE):
             sm.pop()
@@ -518,6 +554,10 @@ class ArenaScene3(Scene):
     def draw(self, sm, window):
         window.blit(utilities.arena_bg, (0, 0))
         globals.world = globals.levels[13]
+        for otherEntity in globals.world.entities:
+            if otherEntity.type == "enemy":
+                if otherEntity.enemyHealth.enemyHealth != 0:
+                    level.load_button.draw()
         self.cameraSystem1.update(window)
 
 class HallScene4(Scene):
@@ -526,6 +566,7 @@ class HallScene4(Scene):
         self.collectionSystem = engine.CollectionSystem()
         self.physicsSystem = engine.PhysicsSystem()
         self.inputSystem = engine.InputSystem()
+        globals.soundManager.playMusic("game_music")
     def input(self, sm, inputStream):
         if inputStream.keyboard.isKeyPressed(pygame.K_ESCAPE):
             sm.pop()
@@ -548,6 +589,7 @@ class HallScene4(Scene):
         hall_bg = pygame.image.load("images/Backgrounds/hall_bg.png")
         hall_bg = pygame.transform.scale(hall_bg, (GAME_WIDTH, GAME_HEIGHT))
         window.blit(hall_bg, (0, 0))
+        level.save_button.draw()
         window.blit(utilities.boss_hintSurface, (20, 430))
         globals.world = globals.levels[14]
         self.cameraSystem.update(window)
@@ -606,6 +648,7 @@ class ArenaScene4(Scene):
         self.cameraSystem1 = engine.CameraSystem1()
         self.physicsSystem = engine.PhysicsSystem()
         self.conditionSystem = engine.ConditionSystem()
+        globals.soundManager.playMusic("arena_music")
     def input(self, sm, inputStream):
         if inputStream.keyboard.isKeyPressed(pygame.K_ESCAPE):
             sm.pop()
@@ -624,11 +667,15 @@ class ArenaScene4(Scene):
     def draw(self, sm, window):
         window.blit(utilities.arena_bg, (0, 0))
         globals.world = globals.levels[16]
+        for otherEntity in globals.world.entities:
+            if otherEntity.type == "enemy":
+                if otherEntity.enemyHealth.enemyHealth != 0:
+                    level.load_button.draw()
         self.cameraSystem1.update(window)
 
 class GameWonScene(Scene):
     def __init__(self):
-        pass
+        globals.soundManager.playMusic("game_won_music")
     def input(self, sm, inputStream):
         if inputStream.keyboard.isKeyPressed(pygame.K_ESCAPE):
             sm.pop()

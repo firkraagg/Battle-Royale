@@ -7,6 +7,8 @@ import globals
 import inputstream
 import soundmanager
 from globals import *
+import pickle
+import button
 
 pygame.init()
 window = pygame.display.set_mode((720, 480))
@@ -362,13 +364,118 @@ entity = engine.Entity()
 
 running = True
 
+def save():
+    with open("save_game.pkl", "wb") as save_game:
+        pickle.dump(player.position, save_game)
+        pickle.dump(player.score, save_game)
+        pickle.dump(player.potions, save_game)
+        pickle.dump(player.poisonPotions, save_game)
+        pickle.dump(player.damage, save_game)
+        pickle.dump(player.health, save_game)
+        pickle.dump(player.maxHealth, save_game)
+        pickle.dump(player.swordLvl, save_game)
+        pickle.dump(player.shieldLvl, save_game)
+
+        pickle.dump(player1.position, save_game)
+        pickle.dump(player1.score, save_game)
+        pickle.dump(player1.potions, save_game)
+        pickle.dump(player1.poisonPotions, save_game)
+        pickle.dump(player1.damage, save_game)
+        pickle.dump(player1.health, save_game)
+        pickle.dump(player1.maxHealth, save_game)
+        pickle.dump(player1.swordLvl, save_game)
+        pickle.dump(player1.shieldLvl, save_game)
+
+        pickle.dump(enemy.position, save_game)
+        pickle.dump(enemy.score, save_game)
+        pickle.dump(enemy.potions, save_game)
+        pickle.dump(enemy.poisonPotions, save_game)
+        pickle.dump(enemy.damage, save_game)
+        pickle.dump(enemy.health, save_game)
+        pickle.dump(enemy.maxHealth, save_game)
+        pickle.dump(enemy.swordLvl, save_game)
+        pickle.dump(enemy.shieldLvl, save_game)
+
+        pickle.dump(enemy1.position, save_game)
+        pickle.dump(enemy1.score, save_game)
+        pickle.dump(enemy1.potions, save_game)
+        pickle.dump(enemy1.poisonPotions, save_game)
+        pickle.dump(enemy1.damage, save_game)
+        pickle.dump(enemy1.health, save_game)
+        pickle.dump(enemy1.maxHealth, save_game)
+        pickle.dump(enemy1.swordLvl, save_game)
+        pickle.dump(enemy1.shieldLvl, save_game)
+
+        pickle.dump(enemy2.position, save_game)
+        pickle.dump(enemy2.score, save_game)
+        pickle.dump(enemy2.potions, save_game)
+        pickle.dump(enemy2.poisonPotions, save_game)
+        pickle.dump(enemy2.damage, save_game)
+        pickle.dump(enemy2.health, save_game)
+        pickle.dump(enemy2.maxHealth, save_game)
+        pickle.dump(enemy2.swordLvl, save_game)
+        pickle.dump(enemy2.shieldLvl, save_game)
+
+        pickle.dump(enemy3.position, save_game)
+        pickle.dump(enemy3.score, save_game)
+        pickle.dump(enemy3.potions, save_game)
+        pickle.dump(enemy3.poisonPotions, save_game)
+        pickle.dump(enemy3.damage, save_game)
+        pickle.dump(enemy3.health, save_game)
+        pickle.dump(enemy3.maxHealth, save_game)
+        pickle.dump(enemy3.swordLvl, save_game)
+        pickle.dump(enemy3.shieldLvl, save_game)
+
+        pickle.dump(enemy4.position, save_game)
+        pickle.dump(enemy4.score, save_game)
+        pickle.dump(enemy4.potions, save_game)
+        pickle.dump(enemy4.poisonPotions, save_game)
+        pickle.dump(enemy4.damage, save_game)
+        pickle.dump(enemy4.health, save_game)
+        pickle.dump(enemy4.maxHealth, save_game)
+        pickle.dump(enemy4.swordLvl, save_game)
+        pickle.dump(enemy4.shieldLvl, save_game)
+
+def load():
+    with open("save_game.pkl", "rb") as load_game:
+        player.position = pickle.load(load_game)
+        player.score = pickle.load(load_game)
+        player.potions = pickle.load(load_game)
+        player.poisonPotions = pickle.load(load_game)
+        player.damage = pickle.load(load_game)
+        player.health = pickle.load(load_game)
+        player.maxHealth = pickle.load(load_game)
+        player.swordLvl = pickle.load(load_game)
+        player.shieldLvl = pickle.load(load_game)
+        print(player)
+        player1.position = pickle.load(load_game)
+        player.score = pickle.load(load_game)
+        player1.score = player.score
+        player.potions = pickle.load(load_game)
+        player.potions = player1.potions
+        player1.poisonPotions = pickle.load(load_game)
+        player.poisonPotions = player1.poisonPotions
+        player1.damage = pickle.load(load_game)
+        player1.health = pickle.load(load_game)
+        player1.maxHealth = pickle.load(load_game)
+        player1.swordLvl = pickle.load(load_game)
+        player1.swordLvl = player.swordLvl
+        player1.shieldLvl = pickle.load(load_game)
+        player1.shieldLvl = player.shieldLvl
+        print(player1)
+        enemy.enemyHealth = engine.EnemyHealth()
+        enemy1.enemyHealth = engine.Enemy1Health()
+        enemy2.enemyHealth = engine.Enemy2Health()
+        enemy3.enemyHealth = engine.Enemy3Health()
+        enemy4.enemyHealth = engine.Enemy4Health()
+
 while running:
+
     inputStream.processInput()
 
     sceneManager.input(inputStream)
     sceneManager.update(inputStream)
     sceneManager.draw(window)
-
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -453,18 +560,18 @@ while running:
                             window.blit(utilities.dialogue_surface1, (0, 380)),
                             window.blit(utilities.dialogue_surface2, (0, 410)),
                             window.blit(utilities.dialogue_surface3, (0, 440))
-        # save_button_image = pygame.image.load("images/save_button.png")
-        # save_button = menu.Button1(window, 1000, 100, save_button_image, 40, 40)
-        # save_button.draw()
-        # load_button_image = pygame.image.load("images/load_button.png")
-        # load_button = menu.Button1(window, 700, 100, load_button_image, 40, 40)
-        # load_button.draw()
-        # if save_button.clicked:
-        #     level.save(entity)
-        #     print("saved")
-        # if load_button.clicked:
-        #     level.load(entity)
-        #     print("loading")
+        if globals.levels == [2]:
+            level.save_button.draw()
+        if globals.levels == [4]:
+            level.load_button.draw()
+        if level.load_button.clicked:
+            load()
+            print("loaded")
+            if entity.health.health == 0:
+                level.yes = True
+        if level.save_button.clicked:
+            save()
+            print("saved")
 
     update()
 
